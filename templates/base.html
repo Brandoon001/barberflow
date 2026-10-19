@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}BarberFlow{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('public.inicio') }}">BarberFlow</a>
+            <a href="{{ url_for('booking.agendamento') }}">Agendar</a>
+            <a href="{{ url_for('admin.painel') }}">Administração</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block conteudo %}{% endblock %}
+    </main>
+</body>
+</html>

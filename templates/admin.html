@@ -1,0 +1,19 @@
+
+{% extends "base.html" %}
+
+{% block titulo %}Administração | BarberFlow{% endblock %}
+
+{% block conteudo %}
+    <h1>Painel administrativo</h1>
+
+    <p>
+        Bem-vindo,
+        {{ session.get("administrador_usuario", "administrador") }}!
+    </p>
+
+    <p>Área restrita da barbearia.</p>
+
+    <form method="POST" action="{{ url_for('admin.logout') }}">
+        <button type="submit">Sair</button>
+    </form>
+{% endblock %}
