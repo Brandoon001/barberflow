@@ -38,6 +38,19 @@ def inicializar_banco():
                 senha_hash TEXT NOT NULL
             )
         """)
+        conexao.execute("""
+            CREATE TABLE IF NOT EXISTS servicos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT NOT NULL,
+                descricao TEXT,
+                preco_centavos INTEGER NOT NULL
+                    CHECK (preco_centavos >= 0),
+                duracao_minutos INTEGER NOT NULL
+                    CHECK (duracao_minutos > 0),
+                ativo INTEGER NOT NULL DEFAULT 1
+                    CHECK (ativo IN (0, 1))
+            )
+        """)
 
 
 app.register_blueprint(public_bp)

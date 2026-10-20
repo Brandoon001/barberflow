@@ -78,3 +78,8 @@ def painel():
 def logout():
     session.clear()
     return redirect(url_for("admin.login"))
+
+@admin_bp.route("/servicos")
+@login_required
+def servicos():
+    return render_template("servicos.html")

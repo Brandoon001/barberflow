@@ -1,19 +1,51 @@
 
 {% extends "base.html" %}
 
-{% block titulo %}Administração | BarberFlow{% endblock %}
+{% block titulo %}Painel administrativo | BarberFlow{% endblock %}
 
 {% block conteudo %}
-    <h1>Painel administrativo</h1>
+<section class="admin-dashboard">
+    <header class="admin-header">
+        <div>
+            <p class="admin-eyebrow">BARBERFLOW · ADMINISTRAÇÃO</p>
+            <h1>Painel administrativo</h1>
+            <p>
+                Olá, {{ session.get("administrador_usuario", "administrador") }}.
+                Bem-vindo ao gerenciamento da barbearia.
+            </p>
+        </div>
 
-    <p>
-        Bem-vindo,
-        {{ session.get("administrador_usuario", "administrador") }}!
-    </p>
+        <form method="POST" action="{{ url_for('admin.logout') }}">
+            <button type="submit" class="btn-logout">Sair</button>
+        </form>
+    </header>
 
-    <p>Área restrita da barbearia.</p>
+    <div class="admin-section-heading">
+        <h2>Acesso rápido</h2>
+        <p>Gerencie as principais áreas do seu negócio.</p>
+    </div>
 
-    <form method="POST" action="{{ url_for('admin.logout') }}">
-        <button type="submit">Sair</button>
-    </form>
+    <div class="admin-grid">
+        <article class="admin-card">
+            <span class="admin-card-icon">01</span>
+            <h3>Agenda</h3>
+            <p>Consulte e gerencie os atendimentos da barbearia.</p>
+            <span class="admin-card-status">Em desenvolvimento</span>
+        </article>
+
+        <article class="admin-card">
+            <span class="admin-card-icon">02</span>
+            <h3>Serviços</h3>
+            <p>Organize cortes, barba, preços e duração dos serviços.</p>
+            <span class="admin-card-status">Próxima etapa</span>
+        </article>
+
+        <article class="admin-card">
+            <span class="admin-card-icon">03</span>
+            <h3>Profissionais</h3>
+            <p>Gerencie os barbeiros e seus horários de atendimento.</p>
+            <span class="admin-card-status">Em desenvolvimento</span>
+        </article>
+    </div>
+</section>
 {% endblock %}

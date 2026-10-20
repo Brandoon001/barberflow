@@ -1,0 +1,160 @@
+
+/* ===== Painel administrativo BarberFlow ===== */
+
+.admin-dashboard {
+    --admin-bg: #111111;
+    --admin-card: #1a1a1a;
+    --admin-border: #303030;
+    --admin-gold: #d4ad65;
+    --admin-text: #f5f2eb;
+    --admin-muted: #aaa49a;
+
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+    color: var(--admin-text);
+}
+
+.admin-dashboard .admin-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-dashboard .admin-eyebrow {
+    margin: 0 0 12px;
+    color: var(--admin-gold);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+}
+
+.admin-dashboard h1 {
+    margin: 0 0 12px;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.15;
+}
+
+.admin-dashboard .admin-header p:not(.admin-eyebrow) {
+    color: var(--admin-muted);
+    line-height: 1.7;
+}
+
+.admin-dashboard .btn-logout {
+    padding: 10px 20px;
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--admin-text);
+    font: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.admin-dashboard .btn-logout:hover {
+    border-color: var(--admin-gold);
+    color: var(--admin-gold);
+}
+
+.admin-dashboard .admin-section-heading {
+    margin: 36px 0 20px;
+}
+
+.admin-dashboard .admin-section-heading h2 {
+    margin: 0 0 8px;
+    font-size: 1.35rem;
+}
+
+.admin-dashboard .admin-section-heading p {
+    margin: 0;
+    color: var(--admin-muted);
+}
+
+.admin-dashboard .admin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.admin-dashboard .admin-card {
+    min-width: 0;
+    padding: 26px;
+    border: 1px solid var(--admin-border);
+    border-radius: 14px;
+    background: var(--admin-card);
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.admin-dashboard .admin-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--admin-gold);
+}
+
+.admin-dashboard .admin-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 24px;
+    border: 1px solid #705a35;
+    border-radius: 10px;
+    color: var(--admin-gold);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.admin-dashboard .admin-card h3 {
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+}
+
+.admin-dashboard .admin-card p {
+    min-height: 52px;
+    margin: 0 0 24px;
+    color: var(--admin-muted);
+    font-size: 0.95rem;
+    line-height: 1.65;
+}
+
+.admin-dashboard .admin-card-status {
+    display: inline-block;
+    padding: 7px 10px;
+    border-radius: 6px;
+    background: #29251d;
+    color: var(--admin-gold);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+@media (max-width: 800px) {
+    .admin-dashboard .admin-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .admin-dashboard {
+        padding: 28px 16px 40px;
+    }
+
+    .admin-dashboard .admin-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .admin-dashboard .admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-dashboard .admin-card {
+        padding: 22px;
+    }
+
+    .admin-dashboard .admin-card p {
+        min-height: 0;
+    }
+}
