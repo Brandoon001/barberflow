@@ -79,7 +79,10 @@ def logout():
     session.clear()
     return redirect(url_for("admin.login"))
 
-@admin_bp.route("/servicos")
+@admin_bp.route("/servicos", methods=["GET", "POST"])
 @login_required
 def servicos():
+    if request.method == "POST":
+        return "Formulário recebido!"
+
     return render_template("servicos.html")
