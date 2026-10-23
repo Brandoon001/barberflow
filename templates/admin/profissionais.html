@@ -1,0 +1,108 @@
+{% extends "admin_base.html" %}
+
+{% block titulo %}Profissionais | {{ marca.nome }}{% endblock %}
+{% block admin_titulo %}Profissionais{% endblock %}
+{% block admin_acoes %}
+<a class="btn btn-fantasma" href="#novo-profissional">Novo profissional</a>
+{% endblock %}
+
+{% block admin_conteudo %}
+<section class="admin-painel-secao" id="novo-profissional">
+    <div class="secao-cabecalho compacto">
+        <div>
+            <span class="eyebrow">EQUIPE</span>
+            <h2>Cadastrar profissional</h2>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('admin.profissionais') }}" class="formulario formulario-grade admin-formulario">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="campo">
+            <label for="nome">Nome completo</label>
+            <input type="text" id="nome" name="nome" maxlength="120" required>
+        </div>
+
+        <div class="campo">
+            <label for="apelido">Apelido (opcional)</label>
+            <input type="text" id="apelido" name="apelido" maxlength="60">
+        </div>
+
+        <div class="campo campo-largo">
+            <label for="bio">Bio (opcional)</label>
+            <textarea id="bio" name="bio" maxlength="500" rows="2"></textarea>
+        </div>
+
+        <fieldset class="campo campo-largo check-grid">
+            <legend>Serviços que atende</legend>
+            {% for servico in servicos %}
+            <label class="check-linha">
+                <input type="checkbox" name="servicos" value="{{ servico.id }}">
+                <span>{{ servico.nome }}</span>
+            </label>
+            {% else %}
+            <p class="texto-ajuda">Cadastre serviços antes de associar à equipe.</p>
+            {% endfor %}
+        </fieldset>
+
+        <div class="campo campo-acao">
+            <button type="submit" class="btn btn-primario">Cadastrar profissional</button>
+        </div>
+    </form>
+</section>
+
+<section class="admin-painel-secao">
+    <div class="secao-cabecalho compacto">
+        <div>
+            <span class="eyebrow">EQUIPE CADASTRADA</span>
+            <h2>{{ profissionais|length }} profissional(is)</h2>
+        </div>
+    </div>
+
+    {% if profissionais %}
+    <div class="tabela-wrapper">
+        <table class="tabela">
+            <thead>
+                <tr>
+                    <th>Profissional</th>
+                    <th>Serviços</th>
+                    <th>Situação</th>
+                    <th class="acoes-coluna">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profissional in profissionais %}
+                <tr>
+                    <td>
+                        <strong>{{ profissional.nome }}</strong>
+                        {% if profissional.apelido %}<small>{{ profissional.apelido }}</small>{% endif %}
+                    </td>
+                    <td>{{ profissional.total_servicos }}</td>
+                    <td>
+                        <span class="badge {% if profissional.ativo %}badge-ativo{% else %}badge-inativo{% endif %}">
+                            {{ "Ativo" if profissional.ativo else "Inativo" }}
+                        </span>
+                    </td>
+                    <td class="acoes-coluna">
+                        <a class="btn btn-mini" href="{{ url_for('admin.horarios_profissional', profissional_id=profissional.id) }}">Horários</a>
+                        <a class="btn btn-mini" href="{{ url_for('admin.editar_profissional', profissional_id=profissional.id) }}">Editar</a>
+                        <form method="POST" action="{{ url_for('admin.situacao_profissional', profissional_id=profissional.id) }}" class="inline-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-mini btn-fantasma">
+                                {{ "Desativar" if profissional.ativo else "Ativar" }}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="estado-vazio compacto">
+        <h3>Nenhum profissional cadastrado</h3>
+        <p>Use o formulário acima para montar a equipe.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

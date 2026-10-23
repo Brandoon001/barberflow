@@ -1,0 +1,796 @@
+.hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.7fr);
+    align-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+    width: min(100% - 2.5rem, var(--largura));
+    margin-inline: auto;
+    padding-block: clamp(4rem, 9vw, 8rem) clamp(3rem, 7vw, 6rem);
+}
+
+.hero h1 {
+    margin-bottom: 1.4rem;
+}
+
+.hero h1 span {
+    color: var(--acento);
+}
+
+.hero-conteudo > p {
+    max-width: 52ch;
+    margin-bottom: 1.8rem;
+    font-size: 1.05rem;
+}
+
+.hero-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+}
+
+.hero-selos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.hero-selos li {
+    position: relative;
+    padding-left: 1rem;
+    color: var(--texto-fraco);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.hero-selos li::before {
+    content: "";
+    position: absolute;
+    top: 0.55em;
+    left: 0;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--sucesso);
+}
+
+.hero-card {
+    padding: clamp(1.4rem, 3vw, 2rem);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio-grande);
+    background:
+        linear-gradient(160deg, rgba(255, 255, 255, 0.07), transparent 45%),
+        var(--superficie);
+    box-shadow: var(--sombra);
+}
+
+.hero-card-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.hero-card-topo .eyebrow {
+    margin: 0;
+}
+
+.status-luz {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--sucesso);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.status-luz::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--sucesso);
+    box-shadow: 0 0 12px var(--sucesso);
+}
+
+.hero-card > strong {
+    display: block;
+    font-family: var(--fonte-display);
+    font-size: 1.15rem;
+    text-transform: uppercase;
+}
+
+.hero-horario {
+    display: block;
+    margin-bottom: 1.2rem;
+    color: var(--texto);
+    font-family: var(--fonte-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+}
+
+.hero-linha {
+    height: 1px;
+    margin: 1.2rem 0;
+    background: var(--borda);
+}
+
+.hero-card p {
+    margin-bottom: 0.4rem;
+    font-size: 0.85rem;
+}
+
+.hero-card .btn {
+    margin-top: 1.2rem;
+}
+
+.secao {
+    width: min(100% - 2.5rem, var(--largura));
+    margin-inline: auto;
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+}
+
+.grade-servicos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.card-servico {
+    display: flex;
+    flex-direction: column;
+    min-height: 230px;
+    padding: 1.4rem;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    background: var(--superficie);
+    transition: transform var(--transicao), border-color var(--transicao);
+}
+
+.card-servico:hover {
+    transform: translateY(-3px);
+    border-color: var(--borda-forte);
+}
+
+.card-servico-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.card-numero {
+    color: var(--texto-fraco);
+    font-family: var(--fonte-display);
+    font-size: 0.9rem;
+    font-weight: 900;
+}
+
+.card-servico h3 {
+    margin-bottom: 0.5rem;
+}
+
+.card-servico p {
+    flex: 1;
+    margin-bottom: 1.2rem;
+    font-size: 0.85rem;
+}
+
+.card-servico-rodape {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--borda);
+}
+
+.card-servico-rodape strong {
+    font-family: var(--fonte-display);
+    font-size: 1.15rem;
+}
+
+.card-servico-rodape a {
+    color: var(--texto-secundario);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.card-servico-rodape a:hover {
+    color: var(--acento-forte);
+}
+
+.secao-como-funciona {
+    border-top: 1px solid var(--borda);
+    border-bottom: 1px solid var(--borda);
+}
+
+.passos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.4rem;
+}
+
+.passos article {
+    position: relative;
+    padding: 1.4rem;
+    border-left: 1px solid var(--borda);
+}
+
+.passos article > span {
+    display: block;
+    margin-bottom: 1rem;
+    color: var(--acento);
+    font-family: var(--fonte-display);
+    font-size: 0.85rem;
+    font-weight: 900;
+}
+
+.passos h3 {
+    margin-bottom: 0.4rem;
+}
+
+.passos p {
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+.grade-profissionais {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.card-profissional {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 1.2rem;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    background: var(--superficie);
+}
+
+.card-profissional h3 {
+    margin: 0.1rem 0 0.25rem;
+}
+
+.card-profissional p {
+    margin: 0;
+    font-size: 0.82rem;
+}
+
+.cta-final {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    width: min(100% - 2.5rem, var(--largura));
+    margin: 2rem auto 0;
+    padding: clamp(1.6rem, 4vw, 3rem);
+    border-radius: var(--raio-grande);
+    background:
+        linear-gradient(120deg, rgba(255, 255, 255, 0.06), transparent 50%),
+        var(--acento-escuro);
+}
+
+.cta-final .eyebrow {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.cta-final h2 {
+    margin-bottom: 0.4rem;
+    color: #fff;
+}
+
+.cta-final p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.cabecalho-pagina {
+    width: min(100% - 2.5rem, var(--largura));
+    margin-inline: auto;
+    padding-block: 2.5rem 1.5rem;
+}
+
+.cabecalho-pagina h1 {
+    margin-bottom: 0.6rem;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+}
+
+.cabecalho-pagina p {
+    max-width: 62ch;
+    margin-bottom: 0;
+}
+
+.conta-cabecalho {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.agendamento-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.7fr);
+    align-items: start;
+    gap: 1.5rem;
+    width: min(100% - 2.5rem, var(--largura));
+    margin: 1rem auto 0;
+}
+
+.painel-formulario,
+.painel-resumo,
+.cartao-central,
+.pagina-texto {
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    background: var(--superficie);
+}
+
+.painel-formulario {
+    padding: clamp(1.2rem, 3vw, 2rem);
+}
+
+.painel-resumo {
+    position: sticky;
+    top: 96px;
+    padding: 1.4rem;
+}
+
+.painel-formulario > .formulario + .formulario {
+    margin-top: 2rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--borda);
+}
+
+.painel-formulario .alerta {
+    margin-top: 1rem;
+}
+
+.etapa-cabecalho {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+}
+
+.etapa-cabecalho.compacto {
+    margin-top: 1.6rem;
+}
+
+.etapa-numero {
+    display: inline-grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    border: 1px solid rgba(230, 57, 70, 0.5);
+    border-radius: 50%;
+    color: #ff9aa1;
+    font-family: var(--fonte-display);
+    font-size: 0.72rem;
+    font-weight: 900;
+}
+
+.etapa-cabecalho h2 {
+    margin-bottom: 0.2rem;
+    font-family: var(--fonte);
+    font-size: 1rem;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.etapa-cabecalho p {
+    margin: 0;
+    font-size: 0.82rem;
+}
+
+.grade-horarios {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.opcao-horario {
+    position: relative;
+    display: block;
+}
+
+.opcao-horario input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.opcao-horario span {
+    display: grid;
+    place-items: center;
+    padding: 0.65rem 0.4rem;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio-pequeno);
+    background: var(--fundo-elevado);
+    color: var(--texto-secundario);
+    font-size: 0.82rem;
+    font-weight: 700;
+    transition: all var(--transicao);
+}
+
+.opcao-horario:hover span {
+    border-color: var(--borda-forte);
+    color: var(--texto);
+}
+
+.opcao-horario input:checked + span {
+    border-color: var(--acento);
+    background: rgba(230, 57, 70, 0.16);
+    color: #fff;
+}
+
+.opcao-horario input:focus-visible + span {
+    outline: 2px solid var(--acento-forte);
+    outline-offset: 2px;
+}
+
+.painel-resumo h2 {
+    margin-bottom: 0.8rem;
+    font-size: 1.3rem;
+}
+
+.painel-resumo p {
+    font-size: 0.85rem;
+}
+
+.painel-resumo .link-seta {
+    margin-top: 1rem;
+}
+
+.cartao-central {
+    width: min(100% - 2.5rem, 520px);
+    margin: 3rem auto 0;
+    padding: clamp(1.4rem, 4vw, 2.4rem);
+}
+
+.cartao-central h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+
+.cartao-central > p {
+    font-size: 0.92rem;
+}
+
+.lista-agendamentos {
+    display: grid;
+    gap: 0.8rem;
+    width: min(100% - 2.5rem, var(--largura));
+    margin: 1.5rem auto 0;
+}
+
+.card-agendamento {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1rem;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    background: var(--superficie);
+}
+
+.card-agendamento-data {
+    display: grid;
+    place-items: center;
+    padding: 0.7rem 0.5rem;
+    border-radius: var(--raio-pequeno);
+    background: var(--fundo-elevado);
+    text-align: center;
+}
+
+.card-agendamento-data strong {
+    font-family: var(--fonte-display);
+    font-size: 1.7rem;
+    line-height: 1;
+}
+
+.card-agendamento-data span {
+    color: var(--texto-secundario);
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.card-agendamento-data small {
+    margin-top: 0.2rem;
+    color: var(--acento-forte);
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.card-agendamento-topo {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+}
+
+.card-agendamento-topo h3 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.card-agendamento-info p {
+    margin: 0.2rem 0 0;
+    font-size: 0.82rem;
+}
+
+.card-agendamento-acoes {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.detalhe-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.7fr);
+    align-items: start;
+    gap: 1.5rem;
+    width: min(100% - 2.5rem, var(--largura));
+    margin: 1rem auto 0;
+}
+
+.detalhe-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.bloco-cancelamento {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--borda);
+}
+
+.bloco-cancelamento h2 {
+    margin-bottom: 0.3rem;
+    font-family: var(--fonte);
+    font-size: 0.95rem;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.bloco-cancelamento p {
+    font-size: 0.82rem;
+}
+
+.pagina-texto {
+    width: min(100% - 2.5rem, 780px);
+    margin: 3rem auto 0;
+    padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.pagina-texto h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.pagina-texto h2 {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    font-family: var(--fonte);
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.pagina-texto p {
+    font-size: 0.95rem;
+}
+
+.pagina-texto a {
+    color: var(--texto);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.auth-body {
+    background:
+        radial-gradient(800px 500px at 20% 10%, rgba(230, 57, 70, 0.16), transparent 60%),
+        var(--fundo);
+}
+
+.auth-page {
+    min-height: 100vh;
+}
+
+.auth-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.8fr);
+    width: min(100% - 2.5rem, 980px);
+    margin: 6vh auto;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio-grande);
+    background: var(--superficie);
+    box-shadow: var(--sombra);
+    overflow: hidden;
+}
+
+.auth-painel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: clamp(2rem, 5vw, 4rem);
+    background:
+        linear-gradient(150deg, rgba(230, 57, 70, 0.2), transparent 55%),
+        var(--fundo-elevado);
+}
+
+.auth-painel .brand-mark {
+    margin-bottom: 2rem;
+}
+
+.auth-painel h1 {
+    font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+}
+
+.auth-painel p {
+    margin-bottom: 1.4rem;
+    font-size: 0.9rem;
+}
+
+.auth-painel a {
+    color: var(--texto-secundario);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.auth-formulario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(1.6rem, 4vw, 3rem);
+}
+
+.auth-formulario h2 {
+    margin-bottom: 1.3rem;
+    font-size: 1.8rem;
+}
+
+@media (max-width: 900px) {
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-card {
+        max-width: 480px;
+    }
+
+    .grade-servicos,
+    .grade-profissionais {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .agendamento-layout,
+    .detalhe-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .painel-resumo {
+        position: static;
+    }
+
+    .auth-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-painel {
+        display: none;
+    }
+
+    .card-agendamento {
+        grid-template-columns: 74px minmax(0, 1fr);
+    }
+
+    .card-agendamento-acoes {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+        border-top: 1px solid var(--borda);
+        padding-top: 0.7rem;
+    }
+}
+
+@media (max-width: 620px) {
+    .hero {
+        width: min(100% - 1.5rem, var(--largura));
+        padding-block: 3rem 2rem;
+    }
+
+    .secao,
+    .cabecalho-pagina,
+    .agendamento-layout,
+    .detalhe-layout,
+    .lista-agendamentos,
+    .cta-final,
+    .cartao-central,
+    .pagina-texto {
+        width: min(100% - 1.5rem, var(--largura));
+    }
+
+    .grade-servicos,
+    .grade-profissionais,
+    .passos {
+        grid-template-columns: 1fr;
+    }
+
+    .passos article {
+        border-left: 0;
+        border-top: 1px solid var(--borda);
+        padding-left: 0;
+    }
+
+    .cta-final,
+    .conta-cabecalho {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .cta-final .btn {
+        width: 100%;
+    }
+
+    .card-agendamento {
+        grid-template-columns: 64px minmax(0, 1fr);
+        gap: 0.8rem;
+    }
+
+    .card-agendamento-data strong {
+        font-size: 1.4rem;
+    }
+
+    .auth-shell {
+        width: min(100% - 1.5rem, 980px);
+        margin-block: 1.2rem;
+    }
+}
+
+.estado-pagina {
+    width: min(100% - 2.5rem, 720px);
+    margin: 5rem auto 0;
+    padding: clamp(2rem, 5vw, 4rem);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio-grande);
+    background: var(--superficie);
+    text-align: center;
+}
+
+.estado-pagina h1 {
+    font-size: clamp(2rem, 5vw, 3.6rem);
+}
+
+.estado-pagina p {
+    max-width: 46ch;
+    margin: 0 auto 1.5rem;
+}
+
+@media (max-width: 620px) {
+    .estado-pagina {
+        width: min(100% - 1.5rem, 720px);
+        margin-top: 3rem;
+    }
+}

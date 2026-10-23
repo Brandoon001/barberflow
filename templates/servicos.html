@@ -45,5 +45,43 @@
 
         <button type="submit">Cadastrar serviço</button>
     </form>
+
+    <div class="admin-section-heading">
+        <h2>Serviços cadastrados</h2>
+        <p>Confira os serviços, valores e a situação atual de cada item.</p>
+    </div>
+
+    {% if servicos %}
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Preço</th>
+                    <th>Duração</th>
+                    <th>Situação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for servico in servicos %}
+                <tr>
+                    <td>{{ servico.nome }}</td>
+                    <td>
+                        R$ {{ "%.2f"|format(servico.preco_centavos / 100)|replace(".", ",") }}
+                    </td>
+                    <td>{{ servico.duracao_minutos }} min</td>
+                    <td>
+                        <span class="admin-status admin-status-{{ 'ativo' if servico.ativo else 'inativo' }}">
+                            {{ "Ativo" if servico.ativo else "Inativo" }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="admin-empty">Nenhum serviço cadastrado.</p>
+    {% endif %}
 </section>
 {% endblock %}

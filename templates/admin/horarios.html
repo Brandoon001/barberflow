@@ -1,0 +1,60 @@
+{% extends "admin_base.html" %}
+
+{% block titulo %}Horários de {{ profissional.nome }} | {{ marca.nome }}{% endblock %}
+{% block admin_titulo %}Horários de {{ profissional.nome }}{% endblock %}
+{% block admin_acoes %}
+<a class="btn btn-fantasma" href="{{ url_for('admin.profissionais') }}">Voltar</a>
+{% endblock %}
+
+{% block admin_conteudo %}
+<section class="admin-painel-secao">
+    <div class="secao-cabecalho compacto">
+        <div>
+            <span class="eyebrow">JORNADA DE TRABALHO</span>
+            <h2>Turnos por dia da semana</h2>
+            <p>Deixe um turno vazio para não atender naquele período. Use o segundo turno para o intervalo de almoço quando necessário.</p>
+        </div>
+    </div>
+
+    <form method="POST" class="formulario admin-formulario">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="horarios-grid">
+            {% for dia in dias %}
+            {% set lista = horarios_por_dia[loop.index0] %}
+            {% set primeiro = lista[0] if lista|length > 0 else none %}
+            {% set segundo = lista[1] if lista|length > 1 else none %}
+            <fieldset class="horario-dia">
+                <legend>{{ dia }}</legend>
+                <div class="horario-turno">
+                    <span>Turno 1</span>
+                    <div class="campo">
+                        <label for="inicio_{{ loop.index0 }}_0" class="sr-only">Início</label>
+                        <input type="time" id="inicio_{{ loop.index0 }}_0" name="inicio_{{ loop.index0 }}_0" value="{{ primeiro.hora_inicio if primeiro else '' }}">
+                    </div>
+                    <div class="campo">
+                        <label for="fim_{{ loop.index0 }}_0" class="sr-only">Fim</label>
+                        <input type="time" id="fim_{{ loop.index0 }}_0" name="fim_{{ loop.index0 }}_0" value="{{ primeiro.hora_fim if primeiro else '' }}">
+                    </div>
+                </div>
+                <div class="horario-turno">
+                    <span>Turno 2</span>
+                    <div class="campo">
+                        <label for="inicio_{{ loop.index0 }}_1" class="sr-only">Início</label>
+                        <input type="time" id="inicio_{{ loop.index0 }}_1" name="inicio_{{ loop.index0 }}_1" value="{{ segundo.hora_inicio if segundo else '' }}">
+                    </div>
+                    <div class="campo">
+                        <label for="fim_{{ loop.index0 }}_1" class="sr-only">Fim</label>
+                        <input type="time" id="fim_{{ loop.index0 }}_1" name="fim_{{ loop.index0 }}_1" value="{{ segundo.hora_fim if segundo else '' }}">
+                    </div>
+                </div>
+            </fieldset>
+            {% endfor %}
+        </div>
+
+        <div class="campo campo-acao">
+            <button type="submit" class="btn btn-primario">Salvar horários</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

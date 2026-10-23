@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block titulo %}Erro interno | {{ marca.nome }}{% endblock %}
+{% block conteudo %}
+<section class="estado-pagina">
+    <span class="eyebrow">ERRO 500</span>
+    <h1>Algo saiu do trilho</h1>
+    <p>Não foi possível concluir a operação. Tente novamente em instantes.</p>
+    <a class="btn btn-primario" href="{{ url_for('public.inicio') }}">Voltar ao início</a>
+</section>
+{% endblock %}

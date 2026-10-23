@@ -1,0 +1,29 @@
+:root {
+    color-scheme: dark;
+
+    --fundo: #0b0b0c;
+    --fundo-elevado: #101012;
+    --superficie: #151518;
+    --superficie-2: #1d1d21;
+    --superficie-3: #26262b;
+    --texto: #f3f1ec;
+    --texto-secundario: #a4a4aa;
+    --texto-fraco: #77777f;
+    --acento: #e63946;
+    --acento-forte: #ff4d59;
+    --acento-escuro: #a51f2b;
+    --sucesso: #3ddc97;
+    --alerta: #f4b942;
+    --info: #79b8ff;
+    --borda: rgba(243, 241, 236, 0.1);
+    --borda-forte: rgba(243, 241, 236, 0.2);
+    --sombra: 0 24px 60px rgba(0, 0, 0, 0.45);
+    --sombra-suave: 0 12px 32px rgba(0, 0, 0, 0.25);
+    --raio: 14px;
+    --raio-grande: 24px;
+    --raio-pequeno: 8px;
+    --largura: 1180px;
+    --transicao: 180ms ease;
+    --fonte: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --fonte-display: "Arial Narrow", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif;
+}

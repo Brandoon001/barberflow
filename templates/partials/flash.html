@@ -1,0 +1,12 @@
+{% with mensagens = get_flashed_messages(with_categories=true) %}
+    {% if mensagens %}
+    <div class="flash-stack" aria-live="polite">
+        {% for categoria, mensagem in mensagens %}
+        <div class="alerta alerta-{{ categoria or 'info' }}" role="status">
+            <span>{{ mensagem }}</span>
+            <button type="button" class="alerta-fechar" aria-label="Fechar mensagem" data-fechar-alerta>&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}

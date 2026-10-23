@@ -1,0 +1,44 @@
+{% extends "admin_base.html" %}
+
+{% block titulo %}Editar serviço | {{ marca.nome }}{% endblock %}
+{% block admin_titulo %}Editar serviço{% endblock %}
+{% block admin_acoes %}
+<a class="btn btn-fantasma" href="{{ url_for('admin.servicos') }}">Voltar</a>
+{% endblock %}
+
+{% block admin_conteudo %}
+<section class="admin-painel-secao">
+    <form method="POST" class="formulario formulario-grade admin-formulario">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="campo campo-largo">
+            <label for="nome">Nome do serviço</label>
+            <input type="text" id="nome" name="nome" maxlength="120" value="{{ servico.nome }}" required>
+        </div>
+
+        <div class="campo">
+            <label for="preco">Preço (R$)</label>
+            <input type="text" id="preco" name="preco" inputmode="decimal" value="{{ '%.2f'|format(servico.preco_centavos / 100) }}" required>
+        </div>
+
+        <div class="campo">
+            <label for="duracao">Duração (minutos)</label>
+            <input type="number" id="duracao" name="duracao" min="1" max="600" step="1" value="{{ servico.duracao_minutos }}" required>
+        </div>
+
+        <div class="campo campo-largo">
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" name="descricao" maxlength="1000" rows="4">{{ servico.descricao or "" }}</textarea>
+        </div>
+
+        <label class="check-linha campo-largo">
+            <input type="checkbox" name="ativo" value="1" {% if servico.ativo %}checked{% endif %}>
+            <span>Serviço ativo e disponível para agendamento</span>
+        </label>
+
+        <div class="campo campo-acao">
+            <button type="submit" class="btn btn-primario">Salvar alterações</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

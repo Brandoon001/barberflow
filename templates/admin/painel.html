@@ -1,0 +1,86 @@
+{% extends "admin_base.html" %}
+
+{% block titulo %}Painel administrativo | {{ marca.nome }}{% endblock %}
+{% block admin_titulo %}Visão geral{% endblock %}
+{% block admin_acoes %}
+<a class="btn btn-primario" href="{{ url_for('admin.agenda_admin') }}">Abrir agenda</a>
+{% endblock %}
+
+{% block admin_conteudo %}
+<div class="admin-metricas">
+    <article class="metrica">
+        <span>Hoje</span>
+        <strong>{{ resumo.hoje }}</strong>
+        <p>atendimentos ativos</p>
+    </article>
+    <article class="metrica">
+        <span>Pendentes</span>
+        <strong>{{ resumo.pendentes }}</strong>
+        <p>aguardando confirmação</p>
+    </article>
+    <article class="metrica {% if resumo.reembolsos %}metrica-alerta{% endif %}">
+        <span>Reembolsos</span>
+        <strong>{{ resumo.reembolsos }}</strong>
+        <p>pendentes de tratamento</p>
+    </article>
+    <article class="metrica">
+        <span>Serviços</span>
+        <strong>{{ resumo.servicos }}</strong>
+        <p>ativos no catálogo</p>
+    </article>
+    <article class="metrica">
+        <span>Profissionais</span>
+        <strong>{{ resumo.profissionais }}</strong>
+        <p>disponíveis</p>
+    </article>
+    <article class="metrica">
+        <span>Clientes</span>
+        <strong>{{ resumo.clientes }}</strong>
+        <p>cadastrados</p>
+    </article>
+</div>
+
+<section class="admin-painel-secao">
+    <div class="secao-cabecalho compacto">
+        <div>
+            <span class="eyebrow">PRÓXIMOS HORÁRIOS</span>
+            <h2>Agenda em sequência</h2>
+        </div>
+        <a class="link-seta" href="{{ url_for('admin.agenda_admin') }}">Ver agenda</a>
+    </div>
+
+    {% if proximos %}
+    <div class="tabela-wrapper">
+        <table class="tabela">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Cliente</th>
+                    <th>Serviço</th>
+                    <th>Profissional</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in proximos %}
+                <tr>
+                    <td>{{ item.data[8:10] }}/{{ item.data[5:7] }}/{{ item.data[0:4] }}</td>
+                    <td>{{ item.hora_inicio }}</td>
+                    <td>{{ item.cliente_nome }}</td>
+                    <td>{{ item.servico_nome }}</td>
+                    <td>{{ item.profissional_nome }}</td>
+                    <td><span class="badge badge-{{ item.status }}">{{ rotulos_status[item.status] }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="estado-vazio compacto">
+        <h3>Nenhum agendamento futuro</h3>
+        <p>Cadastre serviços, profissionais e horários para começar.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

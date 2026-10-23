@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block titulo %}Agendamento | {{ marca.nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="cabecalho-pagina">
+    <span class="eyebrow">AGENDAMENTO ONLINE</span>
+    <h1>Reserve seu horário</h1>
+    <p>Olá, {{ cliente.nome.split()[0] }}. Escolha o serviço, o profissional e o horário.</p>
+</section>
+
+<div class="agendamento-layout">
+    <section class="painel-formulario">
+        <div class="etapa-cabecalho">
+            <span class="etapa-numero">01</span>
+            <div>
+                <h2>Serviço e horário</h2>
+                <p>Os horários exibidos já consideram a duração do serviço.</p>
+            </div>
+        </div>
+
+        <form method="GET" action="{{ url_for('booking.agendar') }}" class="formulario formulario-grade" data-filtro-horarios>
+            <div class="campo">
+                <label for="servico_id">Serviço</label>
+                <select id="servico_id" name="servico_id" required data-auto-submit>
+                    <option value="">Escolha um serviço</option>
+                    {% for servico in servicos %}
+                    <option value="{{ servico.id }}" {% if servico_id == servico.id %}selected{% endif %}>
+                        {{ servico.nome }} · {{ formatar_preco(servico.preco_centavos) }} · {{ servico.duracao_minutos }} min
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="profissional_id">Profissional</label>
+                <select id="profissional_id" name="profissional_id" {% if not profissionais %}disabled{% endif %} required data-auto-submit>
+                    <option value="">{% if servico_id %}Escolha um profissional{% else %}Escolha primeiro o serviço{% endif %}</option>
+                    {% for profissional in profissionais %}
+                    <option value="{{ profissional.id }}" {% if profissional_id == profissional.id %}selected{% endif %}>
+                        {{ profissional.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% if servico_id and not profissionais %}
+                <small class="texto-ajuda">Nenhum profissional ativo atende este serviço.</small>
+                {% endif %}
+            </div>
+
+            <div class="campo">
+                <label for="data">Data</label>
+                <input
+                    type="date"
+                    id="data"
+                    name="data"
+                    min="{{ hoje }}"
+                    max="{{ data_max }}"
+                    value="{{ data_escolhida }}"
+                    required
+                    data-auto-submit
+                >
+            </div>
+
+            <div class="campo campo-acao">
+                <button type="submit" class="btn btn-secundario">Ver horários</button>
+            </div>
+        </form>
+
+        {% if erro_horarios %}
+        <div class="alerta alerta-erro" role="alert">{{ erro_horarios }}</div>
+        {% endif %}
+
+        {% if horarios %}
+        <form method="POST" action="{{ url_for('booking.agendar') }}" class="formulario">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="servico_id" value="{{ servico_id }}">
+            <input type="hidden" name="profissional_id" value="{{ profissional_id }}">
+            <input type="hidden" name="data" value="{{ data_escolhida }}">
+
+            <div class="etapa-cabecalho compacto">
+                <span class="etapa-numero">02</span>
+                <div>
+                    <h2>Escolha o horário</h2>
+                    <p>Horários livres para a data selecionada.</p>
+                </div>
+            </div>
+
+            <fieldset class="grade-horarios">
+                <legend class="sr-only">Horários disponíveis</legend>
+                {% for horario in horarios %}
+                <label class="opcao-horario">
+                    <input type="radio" name="hora_inicio" value="{{ horario }}" required>
+                    <span>{{ horario }}</span>
+                </label>
+                {% endfor %}
+            </fieldset>
+
+            <div class="etapa-cabecalho compacto">
+                <span class="etapa-numero">03</span>
+                <div>
+                    <h2>Detalhes finais</h2>
+                    <p>O WhatsApp é usado apenas para avisos da barbearia.</p>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label for="observacoes">Observações (opcional)</label>
+                <textarea id="observacoes" name="observacoes" maxlength="500" rows="3" placeholder="Alguma preferência ou informação importante?"></textarea>
+            </div>
+
+            <label class="check-linha">
+                <input type="checkbox" required>
+                <span>Confirmo que estou ciente da política de cancelamento de 30 minutos.</span>
+            </label>
+
+            <button type="submit" class="btn btn-primario btn-bloco">Confirmar agendamento</button>
+        </form>
+        {% elif servico_id and profissional_id and data_escolhida and not erro_horarios %}
+        <div class="estado-vazio compacto">
+            <h3>Nenhum horário disponível</h3>
+            <p>Tente outra data ou escolha outro profissional.</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <aside class="painel-resumo">
+        <span class="eyebrow">RESUMO</span>
+        <h2>Antes de confirmar</h2>
+        <ul class="lista-regras">
+            <li>Login seguro com Google.</li>
+            <li>WhatsApp obrigatório para contato.</li>
+            <li>Cancelamento permitido até 30 minutos antes.</li>
+            <li>Após o prazo, fale diretamente com a barbearia.</li>
+            <li>Reembolsos são tratados manualmente pela barbearia.</li>
+        </ul>
+        <a class="link-seta" href="{{ url_for('public.politica_cancelamento') }}">Ler política completa</a>
+    </aside>
+</div>
+{% endblock %}

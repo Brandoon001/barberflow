@@ -1,0 +1,52 @@
+{% extends "admin_base.html" %}
+
+{% block titulo %}Editar profissional | {{ marca.nome }}{% endblock %}
+{% block admin_titulo %}Editar profissional{% endblock %}
+{% block admin_acoes %}
+<a class="btn btn-fantasma" href="{{ url_for('admin.profissionais') }}">Voltar</a>
+{% endblock %}
+
+{% block admin_conteudo %}
+<section class="admin-painel-secao">
+    <form method="POST" class="formulario formulario-grade admin-formulario">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="campo">
+            <label for="nome">Nome completo</label>
+            <input type="text" id="nome" name="nome" maxlength="120" value="{{ profissional.nome }}" required>
+        </div>
+
+        <div class="campo">
+            <label for="apelido">Apelido</label>
+            <input type="text" id="apelido" name="apelido" maxlength="60" value="{{ profissional.apelido or '' }}">
+        </div>
+
+        <div class="campo campo-largo">
+            <label for="bio">Bio</label>
+            <textarea id="bio" name="bio" maxlength="500" rows="3">{{ profissional.bio or '' }}</textarea>
+        </div>
+
+        <fieldset class="campo campo-largo check-grid">
+            <legend>Serviços que atende</legend>
+            {% for servico in servicos %}
+            <label class="check-linha">
+                <input type="checkbox" name="servicos" value="{{ servico.id }}" {% if servico.id in selecionados %}checked{% endif %}>
+                <span>{{ servico.nome }}</span>
+            </label>
+            {% else %}
+            <p class="texto-ajuda">Nenhum serviço cadastrado.</p>
+            {% endfor %}
+        </fieldset>
+
+        <label class="check-linha campo-largo">
+            <input type="checkbox" name="ativo" value="1" {% if profissional.ativo %}checked{% endif %}>
+            <span>Profissional ativo e disponível para agendamento</span>
+        </label>
+
+        <div class="campo campo-acao">
+            <button type="submit" class="btn btn-primario">Salvar alterações</button>
+            <a class="btn btn-fantasma" href="{{ url_for('admin.horarios_profissional', profissional_id=profissional.id) }}">Editar horários</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

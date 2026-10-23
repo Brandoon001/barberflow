@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block titulo %}Minha conta | {{ marca.nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="cabecalho-pagina conta-cabecalho">
+    <div>
+        <span class="eyebrow">MINHA CONTA</span>
+        <h1>Olá, {{ cliente.nome.split()[0] }}</h1>
+        <p>{{ cliente.email }} · WhatsApp {{ formatar_telefone(cliente.telefone) }}</p>
+    </div>
+    <a class="btn btn-primario" href="{{ url_for('booking.agendar') }}">Novo agendamento</a>
+</section>
+
+{% if itens %}
+<div class="lista-agendamentos">
+    {% for item in itens %}
+    {% set agendamento = item.agendamento %}
+    <article class="card-agendamento">
+        <div class="card-agendamento-data">
+            <strong>{{ agendamento.data[8:10] }}</strong>
+            <span>{{ agendamento.data[5:7] }}/{{ agendamento.data[0:4] }}</span>
+            <small>{{ agendamento.hora_inicio }}</small>
+        </div>
+        <div class="card-agendamento-info">
+            <div class="card-agendamento-topo">
+                <h3>{{ agendamento.servico_nome }}</h3>
+                <span class="badge badge-{{ agendamento.status }}">{{ rotulos_status[agendamento.status] }}</span>
+            </div>
+            <p>com {{ agendamento.profissional_nome }} · {{ agendamento.duracao_minutos }} min</p>
+            <p>{{ formatar_preco(agendamento.preco_centavos) }} · {{ rotulos_pagamento[agendamento.status_pagamento] }}</p>
+        </div>
+        <div class="card-agendamento-acoes">
+            <a class="btn btn-fantasma" href="{{ url_for('booking.detalhe_conta', agendamento_id=agendamento.id) }}">Detalhes</a>
+            {% if item.pode_cancelar %}
+            <form method="POST" action="{{ url_for('booking.cancelar_conta', agendamento_id=agendamento.id) }}" data-confirmar="Deseja cancelar este agendamento?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-perigo">Cancelar</button>
+            </form>
+            {% endif %}
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="estado-vazio">
+    <h3>Você ainda não tem agendamentos</h3>
+    <p>Escolha um serviço e reserve seu primeiro horário.</p>
+    <a class="btn btn-primario" href="{{ url_for('booking.agendar') }}">Agendar agora</a>
+</div>
+{% endif %}
+{% endblock %}

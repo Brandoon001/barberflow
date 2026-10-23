@@ -1,0 +1,61 @@
+{% extends "admin_base.html" %}
+
+{% block titulo %}{{ "Editar cliente" if cliente else "Novo cliente" }} | {{ marca.nome }}{% endblock %}
+{% block admin_titulo %}{{ "Editar cliente" if cliente else "Novo cliente manual" }}{% endblock %}
+{% block admin_acoes %}
+<a class="btn btn-fantasma" href="{{ url_for('admin.clientes') }}">Voltar</a>
+{% endblock %}
+
+{% block admin_conteudo %}
+<section class="admin-painel-secao">
+    {% if cliente %}
+    <div class="cliente-resumo">
+        <div>
+            <span class="eyebrow">CADASTRO #{{ cliente.id }}</span>
+            <h2>{{ cliente.nome }}</h2>
+            <p>
+                Origem: {{ "Google" if cliente.origem == "google" else "Manual" }}
+                {% if cliente.email %} · {{ cliente.email }}{% endif %}
+                {% if cliente.cliente_principal_id %} · Vinculado ao cliente #{{ cliente.cliente_principal_id }}{% endif %}
+            </p>
+        </div>
+        {% if cliente.origem == "manual" and cliente.ativo %}
+        <a class="btn btn-secundario" href="{{ url_for('admin.vincular_cliente', cliente_id=cliente.id) }}">Vincular a conta Google</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <form method="POST" class="formulario formulario-grade admin-formulario">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="campo campo-largo">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" name="nome" maxlength="160" value="{{ cliente.nome if cliente else '' }}" required>
+        </div>
+
+        <div class="campo">
+            <label for="telefone">WhatsApp com DDD</label>
+            <input type="tel" id="telefone" name="telefone" inputmode="tel" value="{{ formatar_telefone(cliente.telefone) if cliente else '' }}" required>
+        </div>
+
+        {% if cliente %}
+        <label class="check-linha campo-largo">
+            <input type="checkbox" name="ativo" value="1" {% if cliente.ativo %}checked{% endif %}>
+            <span>Cliente ativo</span>
+        </label>
+        {% endif %}
+
+        <div class="campo campo-acao">
+            <button type="submit" class="btn btn-primario">
+                {{ "Salvar alterações" if cliente else "Cadastrar cliente" }}
+            </button>
+        </div>
+    </form>
+
+    {% if not cliente %}
+    <p class="texto-ajuda">
+        O cadastro manual exige apenas nome e WhatsApp. Não há senha nem login para este cliente.
+    </p>
+    {% endif %}
+</section>
+{% endblock %}

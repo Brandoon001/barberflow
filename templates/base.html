@@ -1,22 +1,106 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-tema="{{ tema }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block titulo %}BarberFlow{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="description" content="{% block descricao %}{{ marca.slogan }}{% endblock %}">
+    <title>{% block titulo %}{{ marca.nome }}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tema.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/componentes.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/publico.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    {% block estilos %}{% endblock %}
 </head>
-<body>
-    <header>
-        <nav>
-            <a href="{{ url_for('public.inicio') }}">BarberFlow</a>
-            <a href="{{ url_for('booking.agendamento') }}">Agendar</a>
-            <a href="{{ url_for('admin.painel') }}">Administração</a>
-        </nav>
-    </header>
+<body class="{% block body_class %}site-body{% endblock %}">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
-    <main>
-        {% block conteudo %}{% endblock %}
+    {% block cabecalho %}
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="{{ url_for('public.inicio') }}" aria-label="{{ marca.nome }} - início">
+                <span class="brand-mark" aria-hidden="true">BF</span>
+                <span class="brand-texto">
+                    <strong>{{ marca.nome }}</strong>
+                    <small>BARBEARIA URBANA</small>
+                </span>
+            </a>
+
+            <button
+                class="menu-toggle"
+                type="button"
+                aria-expanded="false"
+                aria-controls="menu-principal"
+                data-menu-toggle
+            >
+                Menu
+            </button>
+
+            <nav class="main-nav" id="menu-principal" aria-label="Navegação principal">
+                <a href="{{ url_for('public.inicio') }}">Início</a>
+                <a href="{{ url_for('public.inicio') }}#servicos">Serviços</a>
+                <a href="{{ url_for('booking.agendar') }}">Agendar</a>
+
+                {% if cliente_atual %}
+                    <a href="{{ url_for('booking.minha_conta') }}">Minha conta</a>
+                    <form method="POST" action="{{ url_for('auth.logout') }}" class="inline-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="link-button">Sair</button>
+                    </form>
+                {% else %}
+                    <a class="nav-cta" href="{{ url_for('auth.login_google', next=url_for('booking.agendar')) }}">
+                        Entrar com Google
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    {% endblock %}
+
+    <main id="conteudo" class="{% block main_class %}site-main{% endblock %}">
+        {% block miolo %}
+        <div class="container page-container">
+            {% include "partials/flash.html" %}
+            {% block conteudo %}{% endblock %}
+        </div>
+        {% endblock %}
     </main>
+
+    {% block rodape %}
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <span class="brand-mark" aria-hidden="true">BF</span>
+                <h2>{{ marca.nome }}</h2>
+                <p>{{ marca.slogan }}</p>
+            </div>
+            <div>
+                <h3>Horários</h3>
+                <p>Segunda a sábado<br>09:00 às 19:00</p>
+            </div>
+            <div>
+                <h3>Contato</h3>
+                <p>
+                    {% if marca.telefone %}{{ marca.telefone }}<br>{% endif %}
+                    {% if marca.endereco %}{{ marca.endereco }}<br>{% endif %}
+                    {% if marca.instagram %}Instagram: {{ marca.instagram }}{% endif %}
+                </p>
+            </div>
+            <div>
+                <h3>Informações</h3>
+                <a href="{{ url_for('public.privacidade') }}">Privacidade</a>
+                <a href="{{ url_for('public.politica_cancelamento') }}">Cancelamento e reembolso</a>
+                <a href="{{ url_for('admin.login') }}">Área administrativa</a>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <span>&copy; {{ ano_atual }} {{ marca.nome }}</span>
+            <span>Feito para facilitar sua rotina.</span>
+        </div>
+    </footer>
+    {% endblock %}
+
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

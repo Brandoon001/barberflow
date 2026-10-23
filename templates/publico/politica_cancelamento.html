@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block titulo %}Cancelamento e reembolso | {{ marca.nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="pagina-texto">
+    <span class="eyebrow">POLÍTICA DE CANCELAMENTO</span>
+    <h1>Cancelamento e reembolso</h1>
+
+    <h2>Prazo de cancelamento</h2>
+    <p>
+        O cliente pode cancelar pelo site até <strong>30 minutos antes</strong>
+        do horário agendado.
+    </p>
+
+    <h2>Depois do prazo</h2>
+    <p>
+        Com menos de 30 minutos de antecedência, o cancelamento pelo site é
+        bloqueado. Nesse caso, o cliente deve falar diretamente com a barbearia.
+        O administrador ainda pode cancelar o atendimento pelo painel.
+    </p>
+
+    <h2>Reembolsos</h2>
+    <p>
+        Nesta versão não há cobrança online. Quando um agendamento pago for
+        cancelado dentro do prazo, o sistema registra um reembolso pendente.
+        A devolução do valor é feita manualmente pela barbearia, que depois marca
+        o reembolso como concluído no painel.
+    </p>
+
+    <h2>Contato</h2>
+    <p>
+        Para tratar cancelamentos fora do prazo ou reembolsos, fale com a equipe
+        {% if marca.whatsapp %}pelo WhatsApp <a href="https://wa.me/{{ telefone_whatsapp(marca.whatsapp) }}" target="_blank" rel="noopener noreferrer">{{ marca.whatsapp }}</a>{% else %}da barbearia{% endif %}.
+    </p>
+</section>
+{% endblock %}

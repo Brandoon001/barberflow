@@ -1,0 +1,58 @@
+{% extends "admin_base.html" %}
+
+{% block titulo %}Vincular cliente | {{ marca.nome }}{% endblock %}
+{% block admin_titulo %}Vincular cadastros{% endblock %}
+{% block admin_acoes %}
+<a class="btn btn-fantasma" href="{{ url_for('admin.editar_cliente', cliente_id=cliente.id) }}">Voltar</a>
+{% endblock %}
+
+{% block admin_conteudo %}
+<section class="admin-painel-secao">
+    <div class="cliente-resumo">
+        <div>
+            <span class="eyebrow">CADASTRO MANUAL</span>
+            <h2>{{ cliente.nome }}</h2>
+            <p>{{ formatar_telefone(cliente.telefone) }} · #{{ cliente.id }}</p>
+        </div>
+        <span class="badge badge-origem">Manual</span>
+    </div>
+
+    <div class="alerta alerta-info">
+        O cadastro manual será desativado e todos os agendamentos serão transferidos
+        para a conta Google escolhida. O vínculo é manual e não acontece automaticamente
+        pelo número de WhatsApp.
+    </div>
+
+    {% if candidatos %}
+    <form method="POST" class="formulario admin-formulario">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="campo campo-largo">
+            <label for="principal_id">Conta Google de destino</label>
+            <select id="principal_id" name="principal_id" required>
+                <option value="">Selecione uma conta</option>
+                {% for candidato in candidatos %}
+                <option value="{{ candidato.id }}">
+                    {{ candidato.nome }} · {{ candidato.email }}{% if candidato.telefone %} · {{ formatar_telefone(candidato.telefone) }}{% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <label class="check-linha">
+            <input type="checkbox" required>
+            <span>Confirmo que os dois cadastros pertencem à mesma pessoa.</span>
+        </label>
+
+        <div class="campo campo-acao">
+            <button type="submit" class="btn btn-primario" data-confirmar="Confirmar vínculo e transferência dos agendamentos?">Vincular cadastros</button>
+        </div>
+    </form>
+    {% else %}
+    <div class="estado-vazio compacto">
+        <h3>Nenhuma conta Google disponível</h3>
+        <p>O cliente precisa entrar com Google pelo site antes de ser vinculado.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

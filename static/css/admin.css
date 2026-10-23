@@ -1,0 +1,385 @@
+.admin-body {
+    background: var(--fundo);
+}
+
+.admin-shell {
+    display: grid;
+    grid-template-columns: 236px minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 1.3rem 1rem;
+    border-right: 1px solid var(--borda);
+    background: var(--fundo-elevado);
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.3rem 0.5rem 1.4rem;
+    color: var(--texto);
+}
+
+.admin-brand:hover {
+    color: var(--texto);
+}
+
+.admin-brand strong {
+    display: block;
+    font-family: var(--fonte-display);
+    font-size: 0.98rem;
+    text-transform: uppercase;
+}
+
+.admin-brand small {
+    color: var(--texto-fraco);
+    font-size: 0.54rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+}
+
+.admin-nav {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.admin-nav a {
+    padding: 0.68rem 0.7rem;
+    border: 1px solid transparent;
+    border-radius: var(--raio-pequeno);
+    color: var(--texto-secundario);
+    font-size: 0.84rem;
+    font-weight: 600;
+}
+
+.admin-nav a:hover {
+    background: var(--superficie);
+    color: var(--texto);
+}
+
+.admin-nav a.ativo {
+    border-color: var(--borda);
+    background: var(--superficie-2);
+    color: var(--texto);
+    box-shadow: inset 3px 0 0 var(--acento);
+}
+
+.admin-sidebar-footer {
+    display: grid;
+    gap: 0.45rem;
+    margin-top: auto;
+    padding: 1rem 0.5rem 0.2rem;
+    border-top: 1px solid var(--borda);
+}
+
+.admin-sidebar-footer a,
+.admin-sidebar-footer .link-button {
+    color: var(--texto-secundario);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+.admin-sidebar-footer a:hover,
+.admin-sidebar-footer .link-button:hover {
+    color: var(--texto);
+}
+
+.admin-usuario {
+    color: var(--texto-fraco);
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+}
+
+.admin-main {
+    min-width: 0;
+}
+
+.admin-topbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 2rem 2rem 1.3rem;
+    border-bottom: 1px solid var(--borda);
+}
+
+.admin-topbar .eyebrow {
+    margin-bottom: 0.35rem;
+    font-size: 0.6rem;
+}
+
+.admin-topbar h1 {
+    margin: 0;
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+}
+
+.admin-topbar-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.admin-content {
+    padding: 1.5rem 2rem 3rem;
+}
+
+.admin-metricas {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.7rem;
+}
+
+.metrica {
+    padding: 1rem;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    background: var(--superficie);
+}
+
+.metrica span {
+    display: block;
+    color: var(--texto-fraco);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.metrica strong {
+    display: block;
+    margin: 0.5rem 0 0.1rem;
+    font-family: var(--fonte-display);
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.metrica p {
+    margin: 0;
+    color: var(--texto-fraco);
+    font-size: 0.7rem;
+}
+
+.metrica-alerta {
+    border-color: rgba(230, 57, 70, 0.35);
+    background: rgba(230, 57, 70, 0.06);
+}
+
+.metrica-alerta strong {
+    color: #ff8b94;
+}
+
+.admin-painel-secao {
+    padding-block: 1.7rem;
+    border-bottom: 1px solid var(--borda);
+}
+
+.admin-painel-secao:last-child {
+    border-bottom: 0;
+}
+
+.admin-formulario {
+    max-width: 900px;
+    padding: 1.2rem;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    background: var(--superficie);
+}
+
+.filtros-agenda {
+    margin-bottom: 1.4rem;
+}
+
+.barra-busca {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 640px;
+    margin-bottom: 1.5rem;
+}
+
+.barra-busca input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio-pequeno);
+    background: var(--superficie);
+    color: var(--texto);
+}
+
+.barra-busca input:focus {
+    border-color: var(--acento);
+    outline: none;
+}
+
+.cliente-resumo {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+    padding: 1.2rem;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    background: var(--superficie);
+}
+
+.cliente-resumo .eyebrow {
+    margin-bottom: 0.35rem;
+    font-size: 0.6rem;
+}
+
+.cliente-resumo h2 {
+    margin-bottom: 0.3rem;
+    font-size: 1.5rem;
+}
+
+.cliente-resumo p {
+    margin: 0;
+    font-size: 0.82rem;
+}
+
+.horarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 0.8rem;
+}
+
+.horario-dia {
+    margin: 0;
+    padding: 0.9rem;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio-pequeno);
+    background: var(--fundo-elevado);
+}
+
+.horario-dia legend {
+    padding: 0 0.3rem;
+    color: var(--texto);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.horario-turno {
+    display: grid;
+    grid-template-columns: 52px 1fr 1fr;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.horario-turno > span {
+    color: var(--texto-fraco);
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.horario-turno .campo {
+    gap: 0;
+}
+
+.horario-turno input {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.tabela-agenda td {
+    vertical-align: top;
+}
+
+@media (max-width: 1150px) {
+    .admin-metricas {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 860px) {
+    .admin-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-sidebar {
+        position: static;
+        height: auto;
+        padding: 0.8rem 1rem;
+        border-right: 0;
+        border-bottom: 1px solid var(--borda);
+    }
+
+    .admin-brand {
+        padding: 0.2rem 0 0.8rem;
+    }
+
+    .admin-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+
+    .admin-nav a {
+        padding: 0.45rem 0.6rem;
+        font-size: 0.76rem;
+    }
+
+    .admin-nav a.ativo {
+        box-shadow: inset 0 -2px 0 var(--acento);
+    }
+
+    .admin-sidebar-footer {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 0.6rem;
+        padding-top: 0.6rem;
+    }
+
+    .admin-topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 1.4rem 1.25rem 1rem;
+    }
+
+    .admin-content {
+        padding: 1.1rem 1.25rem 2.5rem;
+    }
+
+    .cliente-resumo {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 620px) {
+    .admin-metricas {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-formulario {
+        padding: 0.9rem;
+    }
+
+    .barra-busca {
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    .barra-busca input {
+        flex-basis: 100%;
+    }
+
+    .horarios-grid {
+        grid-template-columns: 1fr;
+    }
+}

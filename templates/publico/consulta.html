@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block titulo %}Detalhes do agendamento | {{ marca.nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="cabecalho-pagina">
+    <span class="eyebrow">AGENDAMENTO</span>
+    <h1>{{ agendamento.servico_nome }}</h1>
+    <p>com {{ agendamento.profissional_nome }} em {{ agendamento.data[8:10] }}/{{ agendamento.data[5:7] }}/{{ agendamento.data[0:4] }} às {{ agendamento.hora_inicio }}.</p>
+</section>
+
+<div class="detalhe-layout">
+    <section class="painel-formulario">
+        <div class="detalhe-status">
+            <span class="badge badge-{{ agendamento.status }}">{{ rotulos_status[agendamento.status] }}</span>
+            <span class="badge badge-{{ agendamento.status_pagamento }}">{{ rotulos_pagamento[agendamento.status_pagamento] }}</span>
+        </div>
+
+        <dl class="lista-detalhes">
+            <div>
+                <dt>Serviço</dt>
+                <dd>{{ agendamento.servico_nome }}</dd>
+            </div>
+            <div>
+                <dt>Profissional</dt>
+                <dd>{{ agendamento.profissional_nome }}</dd>
+            </div>
+            <div>
+                <dt>Data e horário</dt>
+                <dd>{{ agendamento.data[8:10] }}/{{ agendamento.data[5:7] }}/{{ agendamento.data[0:4] }} às {{ agendamento.hora_inicio }}</dd>
+            </div>
+            <div>
+                <dt>Duração</dt>
+                <dd>{{ agendamento.duracao_minutos }} minutos</dd>
+            </div>
+            <div>
+                <dt>Valor</dt>
+                <dd>{{ formatar_preco(agendamento.preco_centavos) }}</dd>
+            </div>
+            <div>
+                <dt>Cliente</dt>
+                <dd>{{ agendamento.cliente_nome }}</dd>
+            </div>
+        </dl>
+
+        {% if agendamento.motivo_cancelamento %}
+        <div class="alerta alerta-info">
+            <strong>Motivo do cancelamento:</strong> {{ agendamento.motivo_cancelamento }}
+        </div>
+        {% endif %}
+
+        {% if agendamento.status_pagamento == 'reembolso_pendente' %}
+        <div class="alerta alerta-atencao">
+            O reembolso está pendente. A barbearia fará o contato para concluir o processo.
+        </div>
+        {% elif agendamento.status_pagamento == 'reembolsado' %}
+        <div class="alerta alerta-sucesso">
+            Reembolso registrado como concluído pela barbearia.
+        </div>
+        {% endif %}
+
+        {% if pode_cancelar %}
+        <form method="POST" action="{{ cancelar_url }}" class="formulario bloco-cancelamento" data-confirmar="Deseja realmente cancelar este agendamento?">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <h2>Cancelar agendamento</h2>
+            <p>Você pode cancelar até 30 minutos antes do horário marcado.</p>
+            <div class="campo">
+                <label for="motivo">Motivo (opcional)</label>
+                <textarea id="motivo" name="motivo" rows="2" maxlength="300"></textarea>
+            </div>
+            <button type="submit" class="btn btn-perigo">Cancelar agendamento</button>
+        </form>
+        {% elif agendamento.status in ['pendente', 'confirmado'] %}
+        <div class="alerta alerta-atencao">
+            <strong>O prazo de cancelamento expirou.</strong>
+            Para cancelar ou tratar um reembolso, fale diretamente com a barbearia.
+            {% if marca.whatsapp %}
+            <a href="https://wa.me/{{ telefone_whatsapp(marca.whatsapp) }}" target="_blank" rel="noopener noreferrer">Abrir WhatsApp</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </section>
+
+    <aside class="painel-resumo">
+        <span class="eyebrow">POLÍTICA</span>
+        <h2>Cancelamento</h2>
+        <p>Até 30 minutos antes do horário, o cancelamento pode ser feito pelo site.</p>
+        <p>Depois desse prazo, somente a barbearia pode cancelar. Reembolsos são processados manualmente.</p>
+        <a class="link-seta" href="{{ url_for('public.politica_cancelamento') }}">Entender as regras</a>
+        <a class="link-seta" href="{{ url_for('booking.minha_conta') }}">Voltar para minha conta</a>
+    </aside>
+</div>
+{% endblock %}

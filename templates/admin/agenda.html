@@ -1,0 +1,169 @@
+{% extends "admin_base.html" %}
+
+{% block titulo %}Agenda | {{ marca.nome }}{% endblock %}
+{% block admin_titulo %}Agenda do dia{% endblock %}
+{% block admin_acoes %}
+<a class="btn btn-fantasma" href="{{ url_for('admin.agenda_admin', data=hoje.isoformat()) }}">Hoje</a>
+{% endblock %}
+
+{% block admin_conteudo %}
+<section class="admin-painel-secao">
+    <form method="GET" action="{{ url_for('admin.agenda_admin') }}" class="formulario formulario-grade admin-formulario filtros-agenda">
+        <div class="campo">
+            <label for="data">Data</label>
+            <input type="date" id="data" name="data" value="{{ data.isoformat() }}">
+        </div>
+
+        <div class="campo">
+            <label for="profissional_id">Profissional</label>
+            <select id="profissional_id" name="profissional_id">
+                <option value="">Todos</option>
+                {% for profissional in profissionais %}
+                <option value="{{ profissional.id }}" {% if profissional_id == profissional.id %}selected{% endif %}>{{ profissional.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="campo">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="">Todos</option>
+                {% for chave, rotulo in rotulos_status.items() %}
+                <option value="{{ chave }}" {% if status == chave %}selected{% endif %}>{{ rotulo }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="campo campo-acao">
+            <button type="submit" class="btn btn-secundario">Filtrar</button>
+        </div>
+    </form>
+
+    <div class="secao-cabecalho compacto">
+        <div>
+            <span class="eyebrow">{{ data.strftime("%d/%m/%Y") }}</span>
+            <h2>{{ itens|length }} agendamento(s)</h2>
+        </div>
+    </div>
+
+    {% if itens %}
+    <div class="tabela-wrapper">
+        <table class="tabela tabela-agenda">
+            <thead>
+                <tr>
+                    <th>Horário</th>
+                    <th>Cliente</th>
+                    <th>Serviço</th>
+                    <th>Profissional</th>
+                    <th>Status</th>
+                    <th>Pagamento</th>
+                    <th class="acoes-coluna">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in itens %}
+                <tr>
+                    <td>
+                        <strong>{{ item.hora_inicio }}</strong>
+                        <small>até {{ item.hora_fim }}</small>
+                    </td>
+                    <td>
+                        <strong>{{ item.cliente_nome }}</strong>
+                        <small>{{ formatar_telefone(item.cliente_telefone) }} · {{ "Google" if item.cliente_origem == "google" else "Manual" }}</small>
+                        {% if telefone_whatsapp(item.cliente_telefone) %}
+                        {% set mensagem = "Olá, " ~ item.cliente_nome ~ "! Sobre seu agendamento de " ~ item.servico_nome ~ " em " ~ item.data[8:10] ~ "/" ~ item.data[5:7] ~ " às " ~ item.hora_inicio ~ "." %}
+                        <a class="link-mini" href="https://wa.me/{{ telefone_whatsapp(item.cliente_telefone) }}?text={{ mensagem|urlencode }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <strong>{{ item.servico_nome }}</strong>
+                        <small>{{ item.duracao_minutos }} min · {{ formatar_preco(item.preco_centavos) }}</small>
+                    </td>
+                    <td>{{ item.profissional_nome }}</td>
+                    <td>
+                        <span class="badge badge-{{ item.status }}">{{ rotulos_status[item.status] }}</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-{{ item.status_pagamento }}">{{ rotulos_pagamento[item.status_pagamento] }}</span>
+                    </td>
+                    <td class="acoes-coluna">
+                        <div class="agenda-acoes">
+                            {% if item.status == "pendente" %}
+                            <form method="POST" action="{{ url_for('admin.confirmar_agendamento', agendamento_id=item.id) }}" class="inline-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="voltar" value="{{ request.full_path }}">
+                                <button type="submit" class="btn btn-mini btn-primario">Confirmar</button>
+                            </form>
+                            {% elif item.status == "confirmado" %}
+                            <form method="POST" action="{{ url_for('admin.concluir_agendamento', agendamento_id=item.id) }}" class="inline-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="voltar" value="{{ request.full_path }}">
+                                <button type="submit" class="btn btn-mini btn-primario">Concluir</button>
+                            </form>
+                            {% endif %}
+
+                            {% if item.status in ["pendente", "confirmado"] %}
+                            <details class="menu-detalhes">
+                                <summary class="btn btn-mini btn-perigo">Cancelar</summary>
+                                <form method="POST" action="{{ url_for('admin.cancelar_agendamento', agendamento_id=item.id) }}" class="formulario compacto">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="voltar" value="{{ request.full_path }}">
+                                    <div class="campo">
+                                        <label for="motivo_{{ item.id }}">Motivo</label>
+                                        <input type="text" id="motivo_{{ item.id }}" name="motivo" maxlength="300" value="Cancelado pela barbearia">
+                                    </div>
+                                    <button type="submit" class="btn btn-mini btn-perigo">Confirmar cancelamento</button>
+                                </form>
+                            </details>
+                            {% endif %}
+
+                            <details class="menu-detalhes">
+                                <summary class="btn btn-mini btn-fantasma">Pagamento</summary>
+                                <form method="POST" action="{{ url_for('admin.pagamento_agendamento', agendamento_id=item.id) }}" class="formulario compacto">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="voltar" value="{{ request.full_path }}">
+                                    <div class="campo">
+                                        <label for="pagamento_{{ item.id }}">Novo status</label>
+                                        <select id="pagamento_{{ item.id }}" name="status_pagamento">
+                                            {% for chave, rotulo in rotulos_pagamento.items() %}
+                                            <option value="{{ chave }}" {% if item.status_pagamento == chave %}selected{% endif %}>{{ rotulo }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="obs_pagamento_{{ item.id }}">Observação</label>
+                                        <input type="text" id="obs_pagamento_{{ item.id }}" name="observacao" maxlength="500">
+                                    </div>
+                                    <button type="submit" class="btn btn-mini btn-secundario">Salvar pagamento</button>
+                                </form>
+                            </details>
+
+                            {% if item.status_pagamento == "reembolso_pendente" %}
+                            <details class="menu-detalhes" open>
+                                <summary class="btn btn-mini btn-alerta">Reembolso</summary>
+                                <form method="POST" action="{{ url_for('admin.reembolso_agendamento', agendamento_id=item.id) }}" class="formulario compacto">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="voltar" value="{{ request.full_path }}">
+                                    <div class="campo">
+                                        <label for="obs_reembolso_{{ item.id }}">Observação do reembolso</label>
+                                        <input type="text" id="obs_reembolso_{{ item.id }}" name="observacao" maxlength="500" placeholder="Ex.: devolvido via Pix">
+                                    </div>
+                                    <button type="submit" class="btn btn-mini btn-primario">Marcar como reembolsado</button>
+                                </form>
+                            </details>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="estado-vazio compacto">
+        <h3>Nenhum agendamento para os filtros</h3>
+        <p>Troque a data ou remova os filtros para ver outros horários.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "admin_base.html" %}
+
+{% block titulo %}Clientes | {{ marca.nome }}{% endblock %}
+{% block admin_titulo %}Clientes{% endblock %}
+{% block admin_acoes %}
+<a class="btn btn-primario" href="{{ url_for('admin.novo_cliente') }}">Novo cliente manual</a>
+{% endblock %}
+
+{% block admin_conteudo %}
+<section class="admin-painel-secao">
+    <form method="GET" action="{{ url_for('admin.clientes') }}" class="barra-busca">
+        <label for="q" class="sr-only">Buscar cliente</label>
+        <input type="search" id="q" name="q" value="{{ busca }}" placeholder="Buscar por nome, WhatsApp ou e-mail">
+        <button type="submit" class="btn btn-secundario">Buscar</button>
+        {% if busca %}<a class="btn btn-fantasma" href="{{ url_for('admin.clientes') }}">Limpar</a>{% endif %}
+    </form>
+
+    <div class="secao-cabecalho compacto">
+        <div>
+            <span class="eyebrow">CADASTROS</span>
+            <h2>{{ clientes|length }} cliente(s){% if busca %} para "{{ busca }}"{% endif %}</h2>
+        </div>
+    </div>
+
+    {% if clientes %}
+    <div class="tabela-wrapper">
+        <table class="tabela">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>WhatsApp</th>
+                    <th>Origem</th>
+                    <th>Agendamentos</th>
+                    <th>Situação</th>
+                    <th class="acoes-coluna">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes %}
+                <tr>
+                    <td>
+                        <strong>{{ cliente.nome }}</strong>
+                        {% if cliente.email %}<small>{{ cliente.email }}</small>{% endif %}
+                    </td>
+                    <td>{{ formatar_telefone(cliente.telefone) }}</td>
+                    <td>
+                        <span class="badge badge-origem">{{ "Google" if cliente.origem == "google" else "Manual" }}</span>
+                        {% if cliente.cliente_principal_id %}<small>vinculado</small>{% endif %}
+                    </td>
+                    <td>{{ cliente.total_agendamentos }}</td>
+                    <td>
+                        <span class="badge {% if cliente.ativo %}badge-ativo{% else %}badge-inativo{% endif %}">
+                            {{ "Ativo" if cliente.ativo else "Inativo" }}
+                        </span>
+                    </td>
+                    <td class="acoes-coluna">
+                        <a class="btn btn-mini" href="{{ url_for('admin.editar_cliente', cliente_id=cliente.id) }}">Editar</a>
+                        {% if cliente.origem == "manual" and cliente.ativo %}
+                        <a class="btn btn-mini btn-fantasma" href="{{ url_for('admin.vincular_cliente', cliente_id=cliente.id) }}">Vincular</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="estado-vazio compacto">
+        <h3>Nenhum cliente encontrado</h3>
+        <p>Cadastre um cliente manual ou aguarde o primeiro login com Google.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ marca.nome }} | Agendamento para barbearia{% endblock %}
+
+{% block conteudo %}
+<section class="hero">
+    <div class="hero-conteudo">
+        <span class="eyebrow">BARBEARIA URBANA · AGENDE ONLINE</span>
+        <h1>Seu próximo corte<br><span>começa aqui.</span></h1>
+        <p>
+            Escolha o serviço, o profissional e o melhor horário.
+            Simples, rápido e sem fila.
+        </p>
+        <div class="hero-acoes">
+            <a class="btn btn-primario" href="{{ url_for('booking.agendar') }}">Agendar horário</a>
+            <a class="btn btn-secundario" href="#servicos">Ver serviços</a>
+        </div>
+        <ul class="hero-selos">
+            <li>Agendamento online</li>
+            <li>Google + WhatsApp</li>
+            <li>Cancelamento com prazo</li>
+        </ul>
+    </div>
+
+    <div class="hero-card" aria-label="Destaques da barbearia">
+        <div class="hero-card-topo">
+            <span class="eyebrow">ATENDIMENTO</span>
+            <span class="status-luz">Online</span>
+        </div>
+        <strong>Seg a sáb</strong>
+        <span class="hero-horario">09:00 — 19:00</span>
+        <div class="hero-linha"></div>
+        <p>Almoço: 12:00 às 13:00</p>
+        <p>Agende com até 60 dias de antecedência.</p>
+        {% if marca.whatsapp %}
+        <a class="btn btn-fantasma btn-bloco" href="https://wa.me/{{ telefone_whatsapp(marca.whatsapp) }}" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="secao" id="servicos">
+    <div class="secao-cabecalho">
+        <div>
+            <span class="eyebrow">NOSSOS SERVIÇOS</span>
+            <h2>Escolha seu próximo visual</h2>
+        </div>
+        <a class="link-seta" href="{{ url_for('booking.agendar') }}">Agendar agora</a>
+    </div>
+
+    {% if servicos %}
+    <div class="grade-servicos">
+        {% for servico in servicos %}
+        <article class="card-servico">
+            <div class="card-servico-topo">
+                <span class="card-numero">{{ "%02d"|format(loop.index) }}</span>
+                <span class="badge badge-acento">{{ servico.duracao_minutos }} min</span>
+            </div>
+            <h3>{{ servico.nome }}</h3>
+            <p>{{ servico.descricao or "Serviço realizado com atenção aos detalhes." }}</p>
+            <div class="card-servico-rodape">
+                <strong>{{ formatar_preco(servico.preco_centavos) }}</strong>
+                <a href="{{ url_for('booking.agendar', servico_id=servico.id) }}">Escolher</a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="estado-vazio">
+        <h3>Serviços em breve</h3>
+        <p>O administrador ainda não cadastrou os serviços da barbearia.</p>
+    </div>
+    {% endif %}
+</section>
+
+<section class="secao secao-como-funciona">
+    <div class="secao-cabecalho">
+        <div>
+            <span class="eyebrow">COMO FUNCIONA</span>
+            <h2>Três passos e pronto</h2>
+        </div>
+    </div>
+    <div class="passos">
+        <article>
+            <span>01</span>
+            <h3>Entre com Google</h3>
+            <p>Seu cadastro fica seguro e você confirma o WhatsApp para contato.</p>
+        </article>
+        <article>
+            <span>02</span>
+            <h3>Escolha o horário</h3>
+            <p>Selecione serviço, profissional, data e um horário disponível.</p>
+        </article>
+        <article>
+            <span>03</span>
+            <h3>Compareça</h3>
+            <p>Acompanhe o status e cancele pelo site respeitando o prazo.</p>
+        </article>
+    </div>
+</section>
+
+{% if profissionais %}
+<section class="secao">
+    <div class="secao-cabecalho">
+        <div>
+            <span class="eyebrow">NOSSO TIME</span>
+            <h2>Quem cuida do seu estilo</h2>
+        </div>
+    </div>
+    <div class="grade-profissionais">
+        {% for profissional in profissionais %}
+        <article class="card-profissional">
+            <span class="avatar-inicial" aria-hidden="true">{{ profissional.nome[:1] }}</span>
+            <div>
+                <h3>{{ profissional.apelido or profissional.nome }}</h3>
+                <p>{{ profissional.bio or "Profissional da equipe " ~ marca.nome ~ "." }}</p>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="cta-final">
+    <div>
+        <span class="eyebrow">PRONTO PARA RENOVAR?</span>
+        <h2>Reserve seu horário agora.</h2>
+        <p>O agendamento leva menos de dois minutos.</p>
+    </div>
+    <a class="btn btn-claro" href="{{ url_for('booking.agendar') }}">Quero agendar</a>
+</section>
+{% endblock %}

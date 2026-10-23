@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block titulo %}Privacidade | {{ marca.nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="pagina-texto">
+    <span class="eyebrow">PRIVACIDADE</span>
+    <h1>Como tratamos seus dados</h1>
+
+    <h2>Dados coletados</h2>
+    <p>
+        Para permitir o agendamento, coletamos seu nome, e-mail e foto pública
+        fornecidos pelo Google, além do número de WhatsApp confirmado por você.
+    </p>
+
+    <h2>Uso das informações</h2>
+    <p>
+        Os dados são usados para identificar seu cadastro, registrar agendamentos,
+        permitir consulta e cancelamento e entrar em contato sobre horários e
+        eventuais alterações.
+    </p>
+
+    <h2>Compartilhamento</h2>
+    <p>
+        Não vendemos seus dados. O número de WhatsApp é acessível apenas à equipe
+        administrativa da barbearia para contato sobre os atendimentos.
+    </p>
+
+    <h2>Segurança</h2>
+    <p>
+        O acesso administrativo é protegido por senha, e as sessões de clientes e
+        administradores são separadas. Tokens de consulta são armazenados apenas
+        como hash.
+    </p>
+
+    <h2>Contato</h2>
+    <p>
+        Para solicitar correção ou exclusão de dados, entre em contato com a
+        barbearia{% if marca.telefone %} pelo telefone {{ marca.telefone }}{% endif %}.
+    </p>
+</section>
+{% endblock %}
