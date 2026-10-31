@@ -14,6 +14,7 @@ from flask import (
 from database.db import obter_conexao
 from extensions import limiter
 from services import agenda
+from services.validacao import normalizar_telefone
 from views.decorators import cliente_atual, cliente_required
 
 
@@ -87,11 +88,17 @@ def agendar():
     if request.method == "POST":
         hora_inicio = (request.form.get("hora_inicio") or "").strip()
         observacoes = (request.form.get("observacoes") or "").strip()
+        consentimento = request.form.get("consentimento")
 
         if not all(
             [servico_id, profissional_id, data_escolhida, hora_inicio]
         ):
             flash("Escolha serviço, profissional, data e horário.", "erro")
+        elif not consentimento:
+            flash(
+                "Confirme que está ciente da política de cancelamento.",
+                "erro",
+            )
         else:
             try:
                 agendamento_id, token = agenda.criar_agendamento(
@@ -101,6 +108,9 @@ def agendar():
                     data=data_escolhida,
                     hora_inicio=hora_inicio,
                     observacoes=observacoes,
+                    consentimento_em=agenda.agora_local().strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    ),
                 )
             except ValueError as erro:
                 flash(str(erro), "erro")
@@ -165,6 +175,55 @@ def minha_conta():
         itens=itens,
         agora=agora,
     )
+
+
+@booking_bp.route("/minha-conta/perfil", methods=["GET", "POST"])
+@cliente_required
+def editar_perfil():
+    cliente = cliente_atual()
+
+    if request.method == "POST":
+        telefone = request.form.get("telefone", "")
+        consentimento = request.form.get("consentimento")
+
+        if not consentimento:
+            flash(
+                "Confirme que aceita ser contatado pela barbearia pelo WhatsApp.",
+                "erro",
+            )
+        else:
+            try:
+                telefone_normalizado = normalizar_telefone(telefone)
+            except ValueError as erro:
+                flash(str(erro), "erro")
+            else:
+                agora = agenda.agora_local().strftime("%Y-%m-%d %H:%M:%S")
+                with obter_conexao(imediata=True) as conexao:
+                    conexao.execute(
+                        """
+                        UPDATE clientes
+                        SET telefone = ?, telefone_confirmado_em = ?,
+                            telefone_informado_em = ?, consentimento_em = ?,
+                            consentimento_versao = ?,
+                            atualizado_em = CURRENT_TIMESTAMP
+                        WHERE id = ?
+                        """,
+                        (
+                            telefone_normalizado,
+                            agora,
+                            agora,
+                            agora,
+                            current_app.config.get(
+                                "CONSENTIMENTO_VERSAO", "2026-10"
+                            ),
+                            cliente["id"],
+                        ),
+                    )
+
+                flash("WhatsApp atualizado com sucesso.", "sucesso")
+                return redirect(url_for("booking.minha_conta"))
+
+    return render_template("publico/perfil.html", cliente=cliente)
 
 
 @booking_bp.route("/agendamento/consulta/<token>")

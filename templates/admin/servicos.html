@@ -67,18 +67,18 @@
             <tbody>
                 {% for servico in servicos %}
                 <tr>
-                    <td>
+                    <td data-label="Nome">
                         <strong>{{ servico.nome }}</strong>
                         {% if servico.descricao %}<small>{{ servico.descricao }}</small>{% endif %}
                     </td>
-                    <td>{{ formatar_preco(servico.preco_centavos) }}</td>
-                    <td>{{ servico.duracao_minutos }} min</td>
-                    <td>
+                    <td data-label="Preço">{{ formatar_preco(servico.preco_centavos) }}</td>
+                    <td data-label="Duração">{{ servico.duracao_minutos }} min</td>
+                    <td data-label="Situação">
                         <span class="badge {% if servico.ativo %}badge-ativo{% else %}badge-inativo{% endif %}">
                             {{ "Ativo" if servico.ativo else "Inativo" }}
                         </span>
                     </td>
-                    <td class="acoes-coluna">
+                    <td class="acoes-coluna" data-label="Ações">
                         <a class="btn btn-mini" href="{{ url_for('admin.editar_servico', servico_id=servico.id) }}">Editar</a>
                         <form method="POST" action="{{ url_for('admin.situacao_servico', servico_id=servico.id) }}" class="inline-form">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

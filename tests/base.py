@@ -125,15 +125,18 @@ class BaseBarberFlowTestCase(unittest.TestCase):
                 """
                 INSERT INTO clientes (
                     google_sub, email, nome, telefone,
-                    origem, telefone_confirmado_em
+                    origem, telefone_confirmado_em, telefone_informado_em
                 )
-                VALUES (?, ?, ?, ?, 'google', ?)
+                VALUES (?, ?, ?, ?, 'google', ?, ?)
                 """,
                 (
                     google_sub or f"google-{nome.lower().replace(' ', '-')}",
                     email or f"{nome.split()[0].lower()}@exemplo.com",
                     nome,
                     telefone,
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    if telefone
+                    else None,
                     datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     if telefone
                     else None,
@@ -146,13 +149,15 @@ class BaseBarberFlowTestCase(unittest.TestCase):
             cursor = conexao.execute(
                 """
                 INSERT INTO clientes (
-                    nome, telefone, origem, telefone_confirmado_em
+                    nome, telefone, origem, telefone_confirmado_em,
+                    telefone_informado_em
                 )
-                VALUES (?, ?, 'manual', ?)
+                VALUES (?, ?, 'manual', ?, ?)
                 """,
                 (
                     nome,
                     telefone,
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 ),
             )

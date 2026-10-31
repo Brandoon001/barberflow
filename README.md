@@ -6,8 +6,10 @@ Google, confirmação de WhatsApp e painel administrativo.
 ## Recursos
 
 - Agendamento online por serviço, profissional, data e horário.
-- Login obrigatório do cliente com Google.
+- Login obrigatório do cliente com Google, com página dedicada em `/entrar`.
 - WhatsApp obrigatório no primeiro acesso, com validação de formato.
+- Consentimento de contato registrado com data e versão do termo.
+- Cliente pode corrigir o WhatsApp depois em **Minha conta**.
 - Consulta e cancelamento pelo cliente até 30 minutos antes do horário.
 - Painel administrativo com login por usuário e senha.
 - Gestão de serviços, profissionais, jornadas de trabalho e clientes.
@@ -67,7 +69,9 @@ GOOGLE_CLIENT_SECRET=...
 GOOGLE_REDIRECT_URI=http://localhost:5000/auth/google/callback
 ```
 
-Sem essas credenciais, o site funciona, mas o login Google fica indisponível.
+Sem essas credenciais, o site continua público, mas a página `/entrar`
+informa que o login Google está indisponível. Em produção, a aplicação
+recusa iniciar sem as credenciais.
 
 ## Regras de negócio
 
@@ -99,6 +103,9 @@ Sem essas credenciais, o site funciona, mas o login Google fica indisponível.
 | `AGENDAMENTO_CONFIRMACAO_AUTOMATICA` | `true` cria agendamentos confirmados. |
 | `ADMIN_SESSAO_MINUTOS` | Expiração da sessão administrativa. |
 | `SESSION_COOKIE_SECURE` | Ative `true` em produção com HTTPS. |
+| `TRUST_PROXY_HEADERS` | Use `true` atrás de Nginx com `X-Forwarded-*`. |
+| `MAX_CONTENT_LENGTH` | Limite de tamanho das requisições, em bytes. |
+| `CONSENTIMENTO_VERSAO` | Versão do termo registrada no cadastro. |
 
 ## Testes
 
@@ -106,9 +113,10 @@ Sem essas credenciais, o site funciona, mas o login Google fica indisponível.
 .venv/bin/python -m unittest discover -s tests -v
 ```
 
-Os testes cobrem autenticação administrativa, CSRF, cabeçalhos de segurança,
-serviços, clientes, vínculo manual, disponibilidade, agendamento, cancelamento
-e reembolso.
+Os testes cobrem autenticação administrativa e de cliente, callback Google,
+consentimento, edição de WhatsApp, CSRF, cabeçalhos de segurança, serviços,
+clientes, vínculo manual, disponibilidade, agendamento, cancelamento e
+reembolso.
 
 ## Estrutura
 
@@ -127,8 +135,14 @@ tests/                    testes com unittest
 ## Produção
 
 - Use `FLASK_ENV=production`.
-- Defina `SECRET_KEY` forte e `SESSION_COOKIE_SECURE=true`.
+- Defina `SECRET_KEY` forte, `SESSION_COOKIE_SECURE=true` e
+  `TRUST_PROXY_HEADERS=true` atrás de Nginx.
+- Configure `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` e um
+  `GOOGLE_REDIRECT_URI` HTTPS público.
+- Use `DATABASE_PATH` com caminho absoluto.
 - Execute atrás de HTTPS com um servidor WSGI de produção.
+- A aplicação recusa iniciar em produção se `SECRET_KEY`, OAuth, cookie seguro,
+  callback HTTPS ou caminho do banco estiverem inseguros.
 - O `RATELIMIT_STORAGE_URI` em memória funciona com um processo. Para múltiplos
   workers, configure um backend compartilhado.
 - Faça backup do arquivo SQLite e do diretório `instance/`.

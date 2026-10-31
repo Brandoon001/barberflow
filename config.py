@@ -26,11 +26,17 @@ class Config:
     SESSION_COOKIE_SECURE = _bool_env("SESSION_COOKIE_SECURE", False)
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
     ADMIN_SESSAO_MINUTOS = int(os.environ.get("ADMIN_SESSAO_MINUTOS", "60"))
+    MAX_CONTENT_LENGTH = int(
+        os.environ.get("MAX_CONTENT_LENGTH", str(2 * 1024 * 1024))
+    )
+    TRUST_PROXY_HEADERS = _bool_env("TRUST_PROXY_HEADERS", False)
 
     WTF_CSRF_TIME_LIMIT = None
     RATELIMIT_STORAGE_URI = os.environ.get("RATELIMIT_STORAGE_URI", "memory://")
     RATELIMIT_ENABLED = True
     RATELIMIT_HEADERS_ENABLED = True
+
+    CONSENTIMENTO_VERSAO = os.environ.get("CONSENTIMENTO_VERSAO", "2026-10")
 
     GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
     GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
@@ -86,12 +92,20 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     ENV = "production"
     SESSION_COOKIE_SECURE = _bool_env("SESSION_COOKIE_SECURE", True)
+    TRUST_PROXY_HEADERS = _bool_env("TRUST_PROXY_HEADERS", True)
+    PREFERRED_URL_SCHEME = "https"
 
 
 def obter_config(nome=None):
     nome = (nome or os.environ.get("FLASK_ENV", "development")).lower()
-    return {
+    configuracoes = {
         "development": DevelopmentConfig,
         "testing": TestingConfig,
         "production": ProductionConfig,
-    }.get(nome, DevelopmentConfig)
+    }
+    if nome not in configuracoes:
+        raise ValueError(
+            f"FLASK_ENV inválido: {nome!r}. "
+            "Use development, testing ou production."
+        )
+    return configuracoes[nome]

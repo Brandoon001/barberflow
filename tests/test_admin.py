@@ -65,6 +65,54 @@ class AdminTestCase(BaseBarberFlowTestCase):
 
         self.assertEqual(total, 1)
 
+    def test_edicao_de_cliente_atualiza_whatsapp(self):
+        cliente_id = self.criar_cliente_manual(telefone="11911111111")
+        self.login_admin()
+
+        resposta = self.client.post(
+            f"/admin/clientes/{cliente_id}/editar",
+            data={
+                "nome": "Cliente Atualizado",
+                "telefone": "(11) 92222-2222",
+                "ativo": "1",
+            },
+            follow_redirects=True,
+        )
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertIn(
+            "Cliente atualizado com sucesso.", resposta.get_data(as_text=True)
+        )
+
+        with obter_conexao() as conexao:
+            cliente = conexao.execute(
+                "SELECT * FROM clientes WHERE id = ?",
+                (cliente_id,),
+            ).fetchone()
+
+        self.assertEqual(cliente["nome"], "Cliente Atualizado")
+        self.assertEqual(cliente["telefone"], "11922222222")
+        self.assertIsNotNone(cliente["telefone_informado_em"])
+
+    def test_clientes_mostra_alerta_de_manual_com_mesmo_whatsapp(self):
+        telefone = "11955554444"
+        self.criar_cliente_manual(
+            nome="Cliente Manual", telefone=telefone
+        )
+        self.criar_cliente_google(
+            nome="Cliente Google", telefone=telefone
+        )
+        self.login_admin()
+
+        resposta = self.client.get("/admin/clientes")
+        html = resposta.get_data(as_text=True)
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertIn(
+            "Existe cadastro manual com este WhatsApp", html
+        )
+        self.assertIn("avalie vincular", html)
+
     def test_vinculo_manual_transfere_agendamentos(self):
         manual_id = self.criar_cliente_manual()
         google_id = self.criar_cliente_google("Ana Google")

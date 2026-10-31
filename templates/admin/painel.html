@@ -65,12 +65,12 @@
             <tbody>
                 {% for item in proximos %}
                 <tr>
-                    <td>{{ item.data[8:10] }}/{{ item.data[5:7] }}/{{ item.data[0:4] }}</td>
-                    <td>{{ item.hora_inicio }}</td>
-                    <td>{{ item.cliente_nome }}</td>
-                    <td>{{ item.servico_nome }}</td>
-                    <td>{{ item.profissional_nome }}</td>
-                    <td><span class="badge badge-{{ item.status }}">{{ rotulos_status[item.status] }}</span></td>
+                    <td data-label="Data">{{ item.data[8:10] }}/{{ item.data[5:7] }}/{{ item.data[0:4] }}</td>
+                    <td data-label="Hora">{{ item.hora_inicio }}</td>
+                    <td data-label="Cliente">{{ item.cliente_nome }}</td>
+                    <td data-label="Serviço">{{ item.servico_nome }}</td>
+                    <td data-label="Profissional">{{ item.profissional_nome }}</td>
+                    <td data-label="Status"><span class="badge badge-{{ item.status }}">{{ rotulos_status[item.status] }}</span></td>
                 </tr>
                 {% endfor %}
             </tbody>

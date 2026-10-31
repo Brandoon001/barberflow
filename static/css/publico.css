@@ -322,6 +322,14 @@
     gap: 1.5rem;
 }
 
+.conta-cabecalho > div {
+    min-width: 0;
+}
+
+.conta-cabecalho p {
+    overflow-wrap: anywhere;
+}
+
 .agendamento-layout {
     display: grid;
     grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.7fr);
@@ -520,6 +528,11 @@
     font-weight: 800;
 }
 
+.card-agendamento-info {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
 .card-agendamento-topo {
     display: flex;
     align-items: center;
@@ -540,6 +553,7 @@
 .card-agendamento-acoes {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.4rem;
 }
 
@@ -678,7 +692,9 @@
     }
 
     .hero-card {
+        width: 100%;
         max-width: 480px;
+        margin-inline: auto;
     }
 
     .grade-servicos,
@@ -766,6 +782,17 @@
     .auth-shell {
         width: min(100% - 1.5rem, 980px);
         margin-block: 1.2rem;
+    }
+}
+
+@media (max-width: 420px) {
+    .hero-acoes {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .hero-acoes .btn {
+        width: 100%;
     }
 }
 

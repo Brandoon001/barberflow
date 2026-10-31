@@ -73,17 +73,17 @@
             <tbody>
                 {% for profissional in profissionais %}
                 <tr>
-                    <td>
+                    <td data-label="Profissional">
                         <strong>{{ profissional.nome }}</strong>
                         {% if profissional.apelido %}<small>{{ profissional.apelido }}</small>{% endif %}
                     </td>
-                    <td>{{ profissional.total_servicos }}</td>
-                    <td>
+                    <td data-label="Serviços">{{ profissional.total_servicos }}</td>
+                    <td data-label="Situação">
                         <span class="badge {% if profissional.ativo %}badge-ativo{% else %}badge-inativo{% endif %}">
                             {{ "Ativo" if profissional.ativo else "Inativo" }}
                         </span>
                     </td>
-                    <td class="acoes-coluna">
+                    <td class="acoes-coluna" data-label="Ações">
                         <a class="btn btn-mini" href="{{ url_for('admin.horarios_profissional', profissional_id=profissional.id) }}">Horários</a>
                         <a class="btn btn-mini" href="{{ url_for('admin.editar_profissional', profissional_id=profissional.id) }}">Editar</a>
                         <form method="POST" action="{{ url_for('admin.situacao_profissional', profissional_id=profissional.id) }}" class="inline-form">

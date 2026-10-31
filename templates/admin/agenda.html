@@ -63,11 +63,11 @@
             <tbody>
                 {% for item in itens %}
                 <tr>
-                    <td>
+                    <td data-label="Horário">
                         <strong>{{ item.hora_inicio }}</strong>
                         <small>até {{ item.hora_fim }}</small>
                     </td>
-                    <td>
+                    <td data-label="Cliente">
                         <strong>{{ item.cliente_nome }}</strong>
                         <small>{{ formatar_telefone(item.cliente_telefone) }} · {{ "Google" if item.cliente_origem == "google" else "Manual" }}</small>
                         {% if telefone_whatsapp(item.cliente_telefone) %}
@@ -75,18 +75,18 @@
                         <a class="link-mini" href="https://wa.me/{{ telefone_whatsapp(item.cliente_telefone) }}?text={{ mensagem|urlencode }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
                         {% endif %}
                     </td>
-                    <td>
+                    <td data-label="Serviço">
                         <strong>{{ item.servico_nome }}</strong>
                         <small>{{ item.duracao_minutos }} min · {{ formatar_preco(item.preco_centavos) }}</small>
                     </td>
-                    <td>{{ item.profissional_nome }}</td>
-                    <td>
+                    <td data-label="Profissional">{{ item.profissional_nome }}</td>
+                    <td data-label="Status">
                         <span class="badge badge-{{ item.status }}">{{ rotulos_status[item.status] }}</span>
                     </td>
-                    <td>
+                    <td data-label="Pagamento">
                         <span class="badge badge-{{ item.status_pagamento }}">{{ rotulos_pagamento[item.status_pagamento] }}</span>
                     </td>
-                    <td class="acoes-coluna">
+                    <td class="acoes-coluna" data-label="Ações">
                         <div class="agenda-acoes">
                             {% if item.status == "pendente" %}
                             <form method="POST" action="{{ url_for('admin.confirmar_agendamento', agendamento_id=item.id) }}" class="inline-form">

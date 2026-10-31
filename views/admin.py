@@ -661,7 +661,13 @@ def clientes():
     sql = """
         SELECT c.*,
                (SELECT COUNT(*) FROM agendamentos a
-                WHERE a.cliente_id = c.id) AS total_agendamentos
+                WHERE a.cliente_id = c.id) AS total_agendamentos,
+               (SELECT COUNT(*) FROM clientes m
+                WHERE m.origem = 'manual'
+                  AND m.ativo = 1
+                  AND c.origem = 'google'
+                  AND m.telefone IS NOT NULL
+                  AND m.telefone = c.telefone) AS manuais_com_mesmo_telefone
         FROM clientes c
         WHERE 1 = 1
     """
@@ -713,18 +719,16 @@ def novo_cliente():
                         "Use o vínculo de cadastros."
                     )
 
+                agora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 conexao.execute(
                     """
                     INSERT INTO clientes (
-                        nome, telefone, origem, telefone_confirmado_em
+                        nome, telefone, origem, telefone_confirmado_em,
+                        telefone_informado_em
                     )
-                    VALUES (?, ?, 'manual', ?)
+                    VALUES (?, ?, 'manual', ?, ?)
                     """,
-                    (
-                        nome,
-                        telefone,
-                        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    ),
+                    (nome, telefone, agora, agora),
                 )
         except ValueError as erro:
             flash(str(erro), "erro")
@@ -776,14 +780,19 @@ def editar_cliente(cliente_id):
                         "Já existe outro cliente ativo com esse WhatsApp."
                     )
 
+                agora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 conexao.execute(
                     """
                     UPDATE clientes
                     SET nome = ?, telefone = ?, ativo = ?,
+                        telefone_informado_em = CASE
+                            WHEN telefone IS NOT ? THEN ?
+                            ELSE telefone_informado_em
+                        END,
                         atualizado_em = CURRENT_TIMESTAMP
                     WHERE id = ?
                     """,
-                    (nome, telefone, ativo, cliente_id),
+                    (nome, telefone, ativo, telefone, agora, cliente_id),
                 )
         except ValueError as erro:
             flash(str(erro), "erro")

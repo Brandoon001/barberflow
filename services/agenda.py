@@ -180,6 +180,7 @@ def criar_agendamento(
     hora_inicio,
     observacoes="",
     agora=None,
+    consentimento_em=None,
 ):
     agora = agora or agora_local()
     data = parse_data(data) if isinstance(data, str) else data
@@ -240,9 +241,10 @@ def criar_agendamento(
                     cliente_id, servico_id, profissional_id,
                     data, hora_inicio, hora_fim,
                     preco_centavos, duracao_minutos, observacoes,
-                    status, status_pagamento, token_hash
+                    status, status_pagamento, token_hash,
+                    consentimento_em
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'nao_pago', ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'nao_pago', ?, ?)
                 """,
                 (
                     cliente_id,
@@ -256,6 +258,7 @@ def criar_agendamento(
                     observacoes or None,
                     status,
                     token_hash,
+                    consentimento_em,
                 ),
             )
         except Exception as erro:

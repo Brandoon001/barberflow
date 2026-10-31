@@ -37,6 +37,7 @@ class AgendamentoTestCase(BaseBarberFlowTestCase):
                 "data": data.isoformat(),
                 "hora_inicio": "09:00",
                 "observacoes": "Corte baixo",
+                "consentimento": "1",
             },
         )
 
@@ -60,10 +61,41 @@ class AgendamentoTestCase(BaseBarberFlowTestCase):
             hashlib.sha256(token.encode()).hexdigest(),
         )
         self.assertEqual(agendamento["observacoes"], "Corte baixo")
+        self.assertIsNotNone(agendamento["consentimento_em"])
 
         consulta = self.client.get(resposta.headers["Location"])
         self.assertEqual(consulta.status_code, 200)
         self.assertIn("Corte", consulta.get_data(as_text=True))
+
+    def test_agendamento_exige_consentimento(self):
+        servico_id = self.criar_servico(duracao_minutos=30)
+        profissional_id = self.criar_profissional(servico_id=servico_id)
+        cliente_id = self.criar_cliente_google()
+        self.login_cliente(cliente_id)
+        data = self.proxima_data_util(2)
+
+        resposta = self.client.post(
+            "/agendamento",
+            data={
+                "servico_id": servico_id,
+                "profissional_id": profissional_id,
+                "data": data.isoformat(),
+                "hora_inicio": "09:00",
+            },
+        )
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertIn(
+            "Confirme que está ciente da política de cancelamento.",
+            resposta.get_data(as_text=True),
+        )
+
+        with obter_conexao() as conexao:
+            total = conexao.execute(
+                "SELECT COUNT(*) AS total FROM agendamentos"
+            ).fetchone()["total"]
+
+        self.assertEqual(total, 0)
 
     def test_horario_ocupado_nao_pode_ser_reservado_novamente(self):
         servico_id = self.criar_servico(duracao_minutos=30)
@@ -76,6 +108,7 @@ class AgendamentoTestCase(BaseBarberFlowTestCase):
             "profissional_id": profissional_id,
             "data": data.isoformat(),
             "hora_inicio": "09:00",
+            "consentimento": "1",
         }
 
         primeira = self.client.post("/agendamento", data=dados)

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block titulo %}Editar WhatsApp | {{ marca.nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="cartao-central">
+    <span class="eyebrow">MINHA CONTA</span>
+    <h1>Atualizar WhatsApp</h1>
+    <p>
+        Corrija o número usado pela barbearia para avisos sobre seus
+        agendamentos.
+    </p>
+
+    <div class="perfil-google">
+        <span class="avatar-inicial">{{ cliente.nome[:1] }}</span>
+        <div>
+            <strong>{{ cliente.nome }}</strong>
+            <span>{{ cliente.email }}</span>
+        </div>
+    </div>
+
+    <form method="POST" class="formulario">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="campo">
+            <label for="telefone">WhatsApp com DDD</label>
+            <input
+                type="tel"
+                id="telefone"
+                name="telefone"
+                inputmode="tel"
+                autocomplete="tel"
+                value="{{ formatar_telefone(cliente.telefone) }}"
+                placeholder="(11) 91234-5678"
+                required
+                autofocus
+            >
+            <small class="texto-ajuda">Exemplo: (11) 91234-5678 ou 11912345678.</small>
+        </div>
+
+        <label class="check-linha">
+            <input type="checkbox" name="consentimento" value="1" required>
+            <span>Autorizo o contato da barbearia pelo WhatsApp sobre meus agendamentos.</span>
+        </label>
+
+        <button type="submit" class="btn btn-primario btn-bloco">Salvar número</button>
+        <a class="btn btn-fantasma btn-bloco" href="{{ url_for('booking.minha_conta') }}">Voltar para minha conta</a>
+    </form>
+</section>
+{% endblock %}

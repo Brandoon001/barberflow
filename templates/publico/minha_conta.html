@@ -9,7 +9,10 @@
         <h1>Olá, {{ cliente.nome.split()[0] }}</h1>
         <p>{{ cliente.email }} · WhatsApp {{ formatar_telefone(cliente.telefone) }}</p>
     </div>
-    <a class="btn btn-primario" href="{{ url_for('booking.agendar') }}">Novo agendamento</a>
+    <div class="hero-acoes">
+        <a class="btn btn-fantasma" href="{{ url_for('booking.editar_perfil') }}">Editar WhatsApp</a>
+        <a class="btn btn-primario" href="{{ url_for('booking.agendar') }}">Novo agendamento</a>
+    </div>
 </section>
 
 {% if itens %}

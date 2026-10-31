@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block titulo %}Entrar | {{ marca.nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="cartao-central">
+    <span class="eyebrow">ACESSO DO CLIENTE</span>
+    <h1>Entre para agendar</h1>
+    <p>
+        Use sua conta Google para acessar seus agendamentos, confirmar o
+        WhatsApp e reservar um novo horário.
+    </p>
+
+    {% if google_configurado %}
+    <a class="btn btn-primario btn-bloco" href="{{ url_for('auth.login_google', next=proximo) }}">
+        Entrar com Google
+    </a>
+    {% else %}
+    <div class="alerta alerta-erro" role="alert">
+        O login com Google está temporariamente indisponível. Fale com a
+        barbearia para agendar.
+    </div>
+    {% endif %}
+
+    <p class="texto-ajuda">
+        No primeiro acesso, pediremos seu WhatsApp para avisos sobre o
+        agendamento. Você poderá corrigir o número depois em Minha conta.
+    </p>
+</section>
+{% endblock %}

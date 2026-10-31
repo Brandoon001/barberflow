@@ -15,7 +15,8 @@ def cliente_atual():
         cliente = conexao.execute(
             """
             SELECT id, google_sub, email, nome, telefone, avatar_url,
-                   origem, telefone_confirmado_em
+                   origem, telefone_confirmado_em, telefone_informado_em,
+                   consentimento_em, consentimento_versao
             FROM clientes
             WHERE id = ? AND ativo = 1
             """,

@@ -183,6 +183,7 @@
     background: var(--superficie);
     color: var(--texto-secundario);
     font-size: 0.88rem;
+    overflow-wrap: anywhere;
 }
 
 .alerta a {
@@ -519,6 +520,10 @@ details.menu-detalhes > .formulario {
     background: var(--superficie);
 }
 
+.perfil-google > div {
+    min-width: 0;
+}
+
 .perfil-google strong,
 .perfil-google span {
     display: block;
@@ -527,6 +532,7 @@ details.menu-detalhes > .formulario {
 .perfil-google span {
     color: var(--texto-secundario);
     font-size: 0.82rem;
+    overflow-wrap: anywhere;
 }
 
 .avatar-inicial {
@@ -611,8 +617,99 @@ details.menu-detalhes > .formulario {
         grid-template-columns: 1fr;
     }
 
-    .tabela th,
+    .tabela-wrapper {
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .tabela,
+    .tabela tbody,
+    .tabela tr,
     .tabela td {
-        padding: 0.75rem;
+        display: block;
+        width: 100%;
+    }
+
+    .tabela thead {
+        display: none;
+    }
+
+    .tabela tbody {
+        display: grid;
+        gap: 0.8rem;
+    }
+
+    .tabela tbody tr {
+        padding: 0.9rem;
+        border: 1px solid var(--borda);
+        border-radius: var(--raio);
+        background: var(--superficie);
+    }
+
+    .tabela tbody tr:hover {
+        background: var(--superficie);
+    }
+
+    .tabela td {
+        padding: 0.55rem 0;
+        border-bottom: 1px solid var(--borda);
+        overflow-wrap: anywhere;
+    }
+
+    .tabela td:last-child {
+        border-bottom: 0;
+    }
+
+    .tabela td::before {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: var(--texto-fraco);
+        content: attr(data-label);
+        font-size: 0.62rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        line-height: 1.4;
+        text-transform: uppercase;
+    }
+
+    .tabela td:not([data-label])::before {
+        content: none;
+    }
+
+    .tabela td.acoes-coluna {
+        min-width: 0;
+        padding-top: 0.7rem;
+    }
+
+    .acoes-coluna .btn,
+    .acoes-coluna form,
+    .agenda-acoes .btn,
+    .agenda-acoes form {
+        margin: 0.12rem 0.12rem 0.12rem 0;
+    }
+
+    .btn-mini {
+        min-height: 40px;
+        padding: 0.55rem 0.7rem;
+        font-size: 0.76rem;
+    }
+
+    details.menu-detalhes {
+        display: block;
+        width: 100%;
+        margin: 0.15rem 0;
+    }
+
+    details.menu-detalhes > summary {
+        display: inline-flex;
+    }
+
+    details.menu-detalhes > .formulario {
+        position: static;
+        width: 100%;
+        margin-top: 0.5rem;
+        box-shadow: none;
     }
 }

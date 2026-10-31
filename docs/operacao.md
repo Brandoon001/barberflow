@@ -9,6 +9,15 @@
 5. Registre o pagamento pelo menu **Pagamento** do agendamento.
 6. Acompanhe os reembolsos pendentes no painel inicial ou na agenda.
 
+## Login do cliente
+
+O cliente acessa `/entrar` e escolhe **Entrar com Google**. No primeiro acesso,
+o sistema pede o WhatsApp com DDD e o consentimento para contato. A data e a
+versão do termo ficam registradas no cadastro.
+
+Depois do cadastro, o cliente pode corrigir o WhatsApp em **Minha conta →
+Editar WhatsApp**. A correção também registra um novo consentimento.
+
 ## Cadastro manual de cliente
 
 Use **Clientes → Novo cliente manual** quando a pessoa ainda não tem conta
@@ -65,10 +74,25 @@ Teste a restauração periodicamente em um ambiente separado.
 
 ## Problemas comuns
 
+### Aplicação não inicia em produção
+
+A inicialização é bloqueada quando:
+
+- `SECRET_KEY` está vazia, curta ou com valor de exemplo;
+- `GOOGLE_CLIENT_ID` ou `GOOGLE_CLIENT_SECRET` estiverem vazios;
+- `GOOGLE_REDIRECT_URI` não é HTTPS público;
+- `SESSION_COOKIE_SECURE` não está `true`;
+- `DATABASE_PATH` não é absoluto.
+
+Corrija o `.env` e reinicie o serviço.
+
 ### Login Google indisponível
 
 Verifique `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` e se o URI de callback no
 Google Cloud é exatamente o mesmo de `GOOGLE_REDIRECT_URI`.
+
+A conta Google precisa ter e-mail verificado. Contas desativadas no painel
+também não conseguem entrar.
 
 ### Cliente não consegue agendar
 

@@ -38,22 +38,28 @@
             <tbody>
                 {% for cliente in clientes %}
                 <tr>
-                    <td>
+                    <td data-label="Cliente">
                         <strong>{{ cliente.nome }}</strong>
                         {% if cliente.email %}<small>{{ cliente.email }}</small>{% endif %}
+                        {% if cliente.manuais_com_mesmo_telefone %}
+                        <small class="texto-ajuda">
+                            Existe cadastro manual com este WhatsApp;
+                            <a href="{{ url_for('admin.clientes', q=cliente.telefone) }}">avalie vincular</a>.
+                        </small>
+                        {% endif %}
                     </td>
-                    <td>{{ formatar_telefone(cliente.telefone) }}</td>
-                    <td>
+                    <td data-label="WhatsApp">{{ formatar_telefone(cliente.telefone) }}</td>
+                    <td data-label="Origem">
                         <span class="badge badge-origem">{{ "Google" if cliente.origem == "google" else "Manual" }}</span>
                         {% if cliente.cliente_principal_id %}<small>vinculado</small>{% endif %}
                     </td>
-                    <td>{{ cliente.total_agendamentos }}</td>
-                    <td>
+                    <td data-label="Agendamentos">{{ cliente.total_agendamentos }}</td>
+                    <td data-label="Situação">
                         <span class="badge {% if cliente.ativo %}badge-ativo{% else %}badge-inativo{% endif %}">
                             {{ "Ativo" if cliente.ativo else "Inativo" }}
                         </span>
                     </td>
-                    <td class="acoes-coluna">
+                    <td class="acoes-coluna" data-label="Ações">
                         <a class="btn btn-mini" href="{{ url_for('admin.editar_cliente', cliente_id=cliente.id) }}">Editar</a>
                         {% if cliente.origem == "manual" and cliente.ativo %}
                         <a class="btn btn-mini btn-fantasma" href="{{ url_for('admin.vincular_cliente', cliente_id=cliente.id) }}">Vincular</a>

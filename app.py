@@ -5,6 +5,7 @@ from urllib.parse import quote
 import click
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request, session
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import generate_password_hash
 
 from config import Config, obter_config
@@ -20,6 +21,53 @@ from services.validacao import (
 load_dotenv()
 
 
+def _validar_configuracao_producao(app):
+    if app.config.get("ENV") != "production":
+        return
+
+    erros = []
+    secret_key = app.config.get("SECRET_KEY") or ""
+    if len(secret_key) < 32 or secret_key.startswith(("dev-", "troque-")):
+        erros.append(
+            "SECRET_KEY deve ser longa, aleatória e diferente do valor de exemplo."
+        )
+
+    if not app.config.get("GOOGLE_CLIENT_ID") or not app.config.get(
+        "GOOGLE_CLIENT_SECRET"
+    ):
+        erros.append(
+            "GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET são obrigatórios."
+        )
+
+    redirect_uri = app.config.get("GOOGLE_REDIRECT_URI") or ""
+    if (
+        not redirect_uri.startswith("https://")
+        or "localhost" in redirect_uri
+        or "127.0.0.1" in redirect_uri
+    ):
+        erros.append(
+            "GOOGLE_REDIRECT_URI deve ser uma URL HTTPS pública de produção."
+        )
+
+    if not app.config.get("SESSION_COOKIE_SECURE"):
+        erros.append("SESSION_COOKIE_SECURE deve ser true em produção.")
+
+    database_path = app.config.get("DATABASE_PATH") or ""
+    if not os.path.isabs(database_path):
+        erros.append("DATABASE_PATH deve ser um caminho absoluto em produção.")
+
+    if erros:
+        raise RuntimeError(
+            "Configuração de produção inválida:\n- " + "\n- ".join(erros)
+        )
+
+    if app.config.get("RATELIMIT_STORAGE_URI") == "memory://":
+        app.logger.warning(
+            "RATELIMIT_STORAGE_URI está em memória. Use um único worker "
+            "Gunicorn ou configure um backend compartilhado."
+        )
+
+
 def create_app(config_object=None):
     app = Flask(__name__, instance_relative_config=True)
 
@@ -32,9 +80,21 @@ def create_app(config_object=None):
         app.config.from_object(config_object)
 
     app.config["MARCA"] = dict(app.config.get("MARCA", Config.MARCA))
+    _validar_configuracao_producao(app)
+
+    if app.config.get("TRUST_PROXY_HEADERS"):
+        app.wsgi_app = ProxyFix(
+            app.wsgi_app,
+            x_for=1,
+            x_proto=1,
+            x_host=1,
+            x_port=1,
+        )
 
     os.makedirs(app.instance_path, exist_ok=True)
-    os.makedirs(os.path.dirname(app.config["DATABASE_PATH"]), exist_ok=True)
+    pasta_banco = os.path.dirname(app.config["DATABASE_PATH"])
+    if pasta_banco:
+        os.makedirs(pasta_banco, exist_ok=True)
 
     csrf.init_app(app)
     limiter.init_app(app)

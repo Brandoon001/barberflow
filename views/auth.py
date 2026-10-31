@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from flask import (
     Blueprint,
     current_app,
@@ -12,6 +10,7 @@ from flask import (
 )
 from database.db import obter_conexao
 from extensions import limiter, oauth
+from services import agenda
 from services.validacao import normalizar_telefone
 from views.decorators import cliente_atual, cliente_required, destino_seguro
 
@@ -48,11 +47,33 @@ def _google_configurado():
     )
 
 
+@auth_bp.route("/entrar")
+def entrar():
+    proximo = destino_seguro(
+        request.args.get("next"), url_for("booking.agendar")
+    )
+
+    if session.get("cliente_id") and cliente_atual():
+        return redirect(
+            destino_seguro(proximo, url_for("booking.minha_conta"))
+        )
+
+    return render_template(
+        "publico/entrar.html",
+        proximo=proximo,
+        google_configurado=_google_configurado(),
+    )
+
+
 @auth_bp.route("/auth/google")
 @limiter.limit("20 per minute")
 def login_google():
     if session.get("cliente_id") and cliente_atual():
-        return redirect(url_for("booking.minha_conta"))
+        return redirect(
+            destino_seguro(
+                request.args.get("next"), url_for("booking.minha_conta")
+            )
+        )
 
     if not _google_configurado():
         flash(
@@ -60,7 +81,7 @@ def login_google():
             "Defina GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET.",
             "erro",
         )
-        return redirect(url_for("public.inicio"))
+        return redirect(url_for("auth.entrar"))
 
     session["oauth_next"] = destino_seguro(
         request.args.get("next"), url_for("booking.minha_conta")
@@ -78,7 +99,7 @@ def login_google():
 def google_callback():
     if not _google_configurado():
         flash("Login com Google indisponível.", "erro")
-        return redirect(url_for("public.inicio"))
+        return redirect(url_for("auth.entrar"))
 
     try:
         token = oauth.google.authorize_access_token()
@@ -86,17 +107,20 @@ def google_callback():
     except Exception:
         current_app.logger.exception("Falha ao concluir login Google")
         flash("Não foi possível entrar com o Google. Tente novamente.", "erro")
-        return redirect(url_for("public.inicio"))
+        return redirect(url_for("auth.entrar"))
 
     google_sub = (perfil or {}).get("sub")
     email = (perfil or {}).get("email")
     nome = (perfil or {}).get("name") or (email or "").split("@")[0]
     avatar_url = (perfil or {}).get("picture")
-    email_verificado = (perfil or {}).get("email_verified", True)
+    email_verificado = (perfil or {}).get("email_verified", False)
 
     if not google_sub or not email or not email_verificado:
+        current_app.logger.warning(
+            "Login Google recusado: perfil sem sub, e-mail ou e-mail verificado."
+        )
         flash("Não foi possível validar sua conta Google.", "erro")
-        return redirect(url_for("public.inicio"))
+        return redirect(url_for("auth.entrar"))
 
     with obter_conexao(imediata=True) as conexao:
         cliente = conexao.execute(
@@ -106,7 +130,7 @@ def google_callback():
 
         if cliente and not cliente["ativo"]:
             flash("Esta conta está desativada. Fale com a barbearia.", "erro")
-            return redirect(url_for("public.inicio"))
+            return redirect(url_for("auth.entrar"))
 
         if cliente:
             conexao.execute(
@@ -185,17 +209,22 @@ def completar_cadastro():
                 "publico/completar_cadastro.html", cliente=cliente
             )
 
+        agora = agenda.agora_local().strftime("%Y-%m-%d %H:%M:%S")
         with obter_conexao() as conexao:
             conexao.execute(
                 """
                 UPDATE clientes
                 SET telefone = ?, telefone_confirmado_em = ?,
-                    atualizado_em = CURRENT_TIMESTAMP
+                    telefone_informado_em = ?, consentimento_em = ?,
+                    consentimento_versao = ?, atualizado_em = CURRENT_TIMESTAMP
                 WHERE id = ?
                 """,
                 (
                     telefone_normalizado,
-                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    agora,
+                    agora,
+                    agora,
+                    current_app.config.get("CONSENTIMENTO_VERSAO", "2026-10"),
                     cliente["id"],
                 ),
             )

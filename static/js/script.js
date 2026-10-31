@@ -8,6 +8,11 @@
             return;
         }
 
+        function fecharMenu() {
+            menu.classList.remove("aberto");
+            botao.setAttribute("aria-expanded", "false");
+        }
+
         botao.addEventListener("click", function () {
             var aberto = menu.classList.toggle("aberto");
             botao.setAttribute("aria-expanded", aberto ? "true" : "false");
@@ -15,8 +20,31 @@
 
         menu.addEventListener("click", function (evento) {
             if (evento.target.closest("a")) {
-                menu.classList.remove("aberto");
-                botao.setAttribute("aria-expanded", "false");
+                fecharMenu();
+            }
+        });
+
+        document.addEventListener("click", function (evento) {
+            if (!menu.classList.contains("aberto")) {
+                return;
+            }
+
+            if (!menu.contains(evento.target) && !botao.contains(evento.target)) {
+                fecharMenu();
+            }
+        });
+
+        document.addEventListener("keydown", function (evento) {
+            if (evento.key === "Escape" && menu.classList.contains("aberto")) {
+                fecharMenu();
+                botao.focus();
+            }
+        });
+
+        var desktop = window.matchMedia("(min-width: 861px)");
+        desktop.addEventListener("change", function (evento) {
+            if (evento.matches) {
+                fecharMenu();
             }
         });
     }

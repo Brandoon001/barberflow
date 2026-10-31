@@ -13,6 +13,7 @@
     top: 0;
     display: flex;
     flex-direction: column;
+    min-width: 0;
     height: 100vh;
     padding: 1.3rem 1rem;
     border-right: 1px solid var(--borda);
@@ -232,6 +233,14 @@
     background: var(--superficie);
 }
 
+.cliente-resumo > div {
+    min-width: 0;
+}
+
+.cliente-resumo p {
+    overflow-wrap: anywhere;
+}
+
 .cliente-resumo .eyebrow {
     margin-bottom: 0.35rem;
     font-size: 0.6rem;
@@ -370,6 +379,18 @@
         padding: 0.9rem;
     }
 
+    .admin-nav {
+        min-width: 0;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 0.2rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-nav a {
+        flex: 0 0 auto;
+    }
+
     .barra-busca {
         align-items: stretch;
         flex-wrap: wrap;
@@ -381,5 +402,15 @@
 
     .horarios-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .horario-turno {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .horario-turno > span {
+        grid-column: 1 / -1;
     }
 }
