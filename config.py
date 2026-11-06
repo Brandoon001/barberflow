@@ -60,6 +60,9 @@ class Config:
     }
     TEMA = os.environ.get("TEMA", "urbano")
 
+    MAPA_EMBED_URL = os.environ.get("MAPA_EMBED_URL", "")
+    MAPA_LINK = os.environ.get("MAPA_LINK", "")
+
     AGENDAMENTO_INTERVALO_MINUTOS = int(
         os.environ.get("AGENDAMENTO_INTERVALO_MINUTOS", "30")
     )

@@ -47,6 +47,93 @@ def _google_configurado():
     )
 
 
+def _normalizar_perfil_google(perfil):
+    dados = perfil or {}
+    google_sub = dados.get("sub")
+    email = dados.get("email")
+    email_verificado = dados.get("email_verified", False)
+
+    if not google_sub or not email or not email_verificado:
+        return None
+
+    email = (email or "").strip()[:254]
+    nome = (dados.get("name") or "").strip() or email.split("@")[0]
+
+    return {
+        "google_sub": google_sub,
+        "email": email,
+        "nome": nome[:160],
+        "avatar_url": dados.get("picture"),
+    }
+
+
+def _entrar_com_perfil_google(perfil, proximo):
+    dados = _normalizar_perfil_google(perfil)
+    if not dados:
+        current_app.logger.warning(
+            "Login Google recusado: perfil sem sub, e-mail ou e-mail verificado."
+        )
+        raise ValueError("Não foi possível validar sua conta Google.")
+
+    with obter_conexao(imediata=True) as conexao:
+        cliente = conexao.execute(
+            "SELECT * FROM clientes WHERE google_sub = ?",
+            (dados["google_sub"],),
+        ).fetchone()
+
+        if cliente and not cliente["ativo"]:
+            raise ValueError(
+                "Esta conta está desativada. Fale com a barbearia."
+            )
+
+        if cliente:
+            conexao.execute(
+                """
+                UPDATE clientes
+                SET nome = ?, email = ?, avatar_url = ?,
+                    atualizado_em = CURRENT_TIMESTAMP
+                WHERE id = ?
+                """,
+                (
+                    dados["nome"],
+                    dados["email"],
+                    dados["avatar_url"],
+                    cliente["id"],
+                ),
+            )
+            cliente_id = cliente["id"]
+        else:
+            cursor = conexao.execute(
+                """
+                INSERT INTO clientes (
+                    google_sub, email, nome, avatar_url, origem
+                )
+                VALUES (?, ?, ?, ?, 'google')
+                """,
+                (
+                    dados["google_sub"],
+                    dados["email"],
+                    dados["nome"],
+                    dados["avatar_url"],
+                ),
+            )
+            cliente_id = cursor.lastrowid
+
+    proximo = destino_seguro(proximo, url_for("booking.minha_conta"))
+
+    _preservar_admin_e_renovar_sessao()
+    session.permanent = True
+    session["cliente_id"] = cliente_id
+
+    cliente = cliente_atual()
+    if not cliente or not cliente["telefone"]:
+        session["pos_cadastro_next"] = proximo
+        return url_for("auth.completar_cadastro")
+
+    flash(f"Bem-vindo, {cliente['nome'].split()[0]}!", "sucesso")
+    return proximo
+
+
 @auth_bp.route("/entrar")
 def entrar():
     proximo = destino_seguro(
@@ -109,71 +196,16 @@ def google_callback():
         flash("Não foi possível entrar com o Google. Tente novamente.", "erro")
         return redirect(url_for("auth.entrar"))
 
-    google_sub = (perfil or {}).get("sub")
-    email = (perfil or {}).get("email")
-    nome = (perfil or {}).get("name") or (email or "").split("@")[0]
-    avatar_url = (perfil or {}).get("picture")
-    email_verificado = (perfil or {}).get("email_verified", False)
-
-    if not google_sub or not email or not email_verificado:
-        current_app.logger.warning(
-            "Login Google recusado: perfil sem sub, e-mail ou e-mail verificado."
-        )
-        flash("Não foi possível validar sua conta Google.", "erro")
-        return redirect(url_for("auth.entrar"))
-
-    with obter_conexao(imediata=True) as conexao:
-        cliente = conexao.execute(
-            "SELECT * FROM clientes WHERE google_sub = ?",
-            (google_sub,),
-        ).fetchone()
-
-        if cliente and not cliente["ativo"]:
-            flash("Esta conta está desativada. Fale com a barbearia.", "erro")
-            return redirect(url_for("auth.entrar"))
-
-        if cliente:
-            conexao.execute(
-                """
-                UPDATE clientes
-                SET nome = ?, email = ?, avatar_url = ?,
-                    atualizado_em = CURRENT_TIMESTAMP
-                WHERE id = ?
-                """,
-                (nome.strip()[:160], email.strip()[:254], avatar_url, cliente["id"]),
-            )
-            cliente_id = cliente["id"]
-        else:
-            cursor = conexao.execute(
-                """
-                INSERT INTO clientes (
-                    google_sub, email, nome, avatar_url, origem
-                )
-                VALUES (?, ?, ?, ?, 'google')
-                """,
-                (
-                    google_sub,
-                    email.strip()[:254],
-                    nome.strip()[:160],
-                    avatar_url,
-                ),
-            )
-            cliente_id = cursor.lastrowid
-
     proximo = session.get("oauth_next") or url_for("booking.minha_conta")
     proximo = destino_seguro(proximo, url_for("booking.minha_conta"))
 
-    _preservar_admin_e_renovar_sessao()
-    session.permanent = True
-    session["cliente_id"] = cliente_id
+    try:
+        destino = _entrar_com_perfil_google(perfil, proximo)
+    except ValueError as erro:
+        flash(str(erro), "erro")
+        return redirect(url_for("auth.entrar", next=proximo))
 
-    cliente = cliente_atual()
-    if not cliente or not cliente["telefone"]:
-        session["pos_cadastro_next"] = proximo
-        return redirect(url_for("auth.completar_cadastro"))
-
-    flash(f"Bem-vindo, {cliente['nome'].split()[0]}!", "sucesso")
-    return redirect(proximo)
+    return redirect(destino)
 
 
 @auth_bp.route("/auth/logout", methods=["POST"])

@@ -22,19 +22,39 @@
         </ul>
     </div>
 
-    <div class="hero-card" aria-label="Destaques da barbearia">
-        <div class="hero-card-topo">
-            <span class="eyebrow">ATENDIMENTO</span>
-            <span class="status-luz">Online</span>
+    <div class="hero-visual">
+        <figure class="hero-foto">
+            <picture>
+                <source type="image/webp" srcset="{{ url_for('static', filename='img/optimized/focando_corte.webp') }}">
+                <img
+                    src="{{ url_for('static', filename='img/optimized/focando_corte.jpg') }}"
+                    alt="Barbeiro finalizando um corte de cabelo com atenção aos detalhes"
+                    width="1407"
+                    height="768"
+                    fetchpriority="high"
+                    decoding="async"
+                >
+            </picture>
+            <figcaption class="hero-foto-legenda">
+                <span class="eyebrow">NO DETALHE</span>
+                <strong>Precisão em cada corte</strong>
+            </figcaption>
+        </figure>
+
+        <div class="hero-card hero-card-sobreposto" aria-label="Destaques da barbearia">
+            <div class="hero-card-topo">
+                <span class="eyebrow">ATENDIMENTO</span>
+                <span class="status-luz">Online</span>
+            </div>
+            <strong>Seg a sáb</strong>
+            <span class="hero-horario">09:00 — 19:00</span>
+            <div class="hero-linha"></div>
+            <p>Almoço: 12:00 às 13:00</p>
+            <p>Agende com até 60 dias de antecedência.</p>
+            {% if marca.whatsapp %}
+            <a class="btn btn-fantasma btn-bloco" href="https://wa.me/{{ telefone_whatsapp(marca.whatsapp) }}" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
+            {% endif %}
         </div>
-        <strong>Seg a sáb</strong>
-        <span class="hero-horario">09:00 — 19:00</span>
-        <div class="hero-linha"></div>
-        <p>Almoço: 12:00 às 13:00</p>
-        <p>Agende com até 60 dias de antecedência.</p>
-        {% if marca.whatsapp %}
-        <a class="btn btn-fantasma btn-bloco" href="https://wa.me/{{ telefone_whatsapp(marca.whatsapp) }}" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
-        {% endif %}
     </div>
 </section>
 
@@ -98,6 +118,127 @@
     </div>
 </section>
 
+<section class="secao secao-espaco" id="espaco">
+    <div class="secao-cabecalho">
+        <div>
+            <span class="eyebrow">NOSSO ESPAÇO</span>
+            <h2>Um ambiente feito para você</h2>
+        </div>
+        <a class="link-seta" href="{{ url_for('booking.agendar') }}">Agende sua visita</a>
+    </div>
+
+    <div class="galeria-espaco">
+        <figure class="galeria-item galeria-item-destaque">
+            <picture>
+                <source type="image/webp" srcset="{{ url_for('static', filename='img/optimized/ambiente.webp') }}">
+                <img
+                    src="{{ url_for('static', filename='img/optimized/ambiente.jpg') }}"
+                    alt="Ambiente interno da barbearia com iluminação aconchegante"
+                    width="1408"
+                    height="768"
+                    loading="lazy"
+                    decoding="async"
+                >
+            </picture>
+            <figcaption>
+                <span class="eyebrow">AMBIENTE</span>
+                <strong>Conforto e estilo em cada detalhe</strong>
+            </figcaption>
+        </figure>
+
+        <figure class="galeria-item">
+            <picture>
+                <source type="image/webp" srcset="{{ url_for('static', filename='img/optimized/mesa.webp') }}">
+                <img
+                    src="{{ url_for('static', filename='img/optimized/mesa.jpg') }}"
+                    alt="Estação de trabalho organizada com ferramentas de barbeiro"
+                    width="1408"
+                    height="768"
+                    loading="lazy"
+                    decoding="async"
+                >
+            </picture>
+            <figcaption>
+                <span class="eyebrow">ESTAÇÃO</span>
+                <strong>Ferramentas sempre prontas</strong>
+            </figcaption>
+        </figure>
+
+        <figure class="galeria-item">
+            <picture>
+                <source type="image/webp" srcset="{{ url_for('static', filename='img/optimized/frente.webp') }}">
+                <img
+                    src="{{ url_for('static', filename='img/optimized/frente.jpg') }}"
+                    alt="Fachada da barbearia vista pela rua"
+                    width="1408"
+                    height="768"
+                    loading="lazy"
+                    decoding="async"
+                >
+            </picture>
+            <figcaption>
+                <span class="eyebrow">NOSSA CASA</span>
+                <strong>Venha nos visitar</strong>
+            </figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="secao secao-mapa" id="localizacao">
+    <div class="secao-cabecalho">
+        <div>
+            <span class="eyebrow">ONDE ESTAMOS</span>
+            <h2>{% if mapa.embed_url %}Venha nos visitar{% else %}Estamos preparando nosso mapa{% endif %}</h2>
+        </div>
+        {% if mapa.link %}
+        <a class="link-seta" href="{{ mapa.link }}" target="_blank" rel="noopener noreferrer">Abrir no mapa</a>
+        {% endif %}
+    </div>
+
+    <div class="mapa-cartao">
+        {% if mapa.embed_url %}
+        <iframe
+            src="{{ mapa.embed_url }}"
+            title="Mapa da localização da {{ marca.nome }}"
+            width="1200"
+            height="480"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+        ></iframe>
+        {% else %}
+        <div class="mapa-placeholder">
+            <svg class="mapa-placeholder-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 21s7-5.6 7-12a7 7 0 1 0-14 0c0 6.4 7 12 7 12Z"></path>
+                <circle cx="12" cy="9" r="2.5"></circle>
+            </svg>
+            <strong>Endereço em breve</strong>
+            <p>Em breve você poderá conferir a localização da {{ marca.nome }} por aqui.</p>
+        </div>
+        {% endif %}
+
+        <div class="mapa-info">
+            <span class="eyebrow">ENDEREÇO</span>
+            {% if mapa.endereco %}
+            <strong>{{ mapa.endereco }}</strong>
+            <p>
+                Estamos prontos para receber você. Confira o horário
+                disponível e reserve seu atendimento.
+            </p>
+            {% else %}
+            <strong>Em breve</strong>
+            <p>
+                Assim que nosso endereço estiver disponível, você poderá
+                traçar a rota até aqui.
+            </p>
+            {% endif %}
+            {% if mapa.link %}
+            <a class="btn btn-secundario" href="{{ mapa.link }}" target="_blank" rel="noopener noreferrer">Como chegar</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
 {% if profissionais %}
 <section class="secao">
     <div class="secao-cabecalho">
@@ -120,7 +261,7 @@
 </section>
 {% endif %}
 
-<section class="cta-final">
+<section class="cta-final cta-final--foto">
     <div>
         <span class="eyebrow">PRONTO PARA RENOVAR?</span>
         <h2>Reserve seu horário agora.</h2>

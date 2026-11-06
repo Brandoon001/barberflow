@@ -52,10 +52,16 @@ class AuthTestCase(BaseBarberFlowTestCase):
         self.assertEqual(resposta.status_code, 200)
         self.assertIn("Entrar com Google", html)
         self.assertIn("/auth/google", html)
+        self.assertNotIn('id="google-one-tap"', html)
+        self.assertNotIn("accounts.google.com/gsi", html)
+        self.assertNotIn("js/google-onetap.js", html)
 
     def test_pagina_entrar_sem_configuracao_avisa_indisponivel(self):
         self.app.config.update(
-            {"GOOGLE_CLIENT_ID": "", "GOOGLE_CLIENT_SECRET": ""}
+            {
+                "GOOGLE_CLIENT_ID": "",
+                "GOOGLE_CLIENT_SECRET": "",
+            }
         )
 
         resposta = self.client.get("/entrar")
@@ -63,6 +69,7 @@ class AuthTestCase(BaseBarberFlowTestCase):
 
         self.assertEqual(resposta.status_code, 200)
         self.assertIn("temporariamente indisponível", html)
+        self.assertNotIn('id="google-one-tap"', html)
 
     def test_callback_cria_cliente_e_pede_whatsapp(self):
         self._configurar_google()

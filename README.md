@@ -17,6 +17,7 @@ Google, confirmação de WhatsApp e painel administrativo.
 - Agenda diária com confirmação, conclusão, cancelamento e pagamentos.
 - Reembolso tratado manualmente pela barbearia.
 - Identidade white-label por variáveis de ambiente.
+- Mapa de localização configurável, com link para traçar rota.
 - Cabeçalhos de segurança, CSRF e limitação de tentativas.
 
 ## Requisitos
@@ -69,9 +70,24 @@ GOOGLE_CLIENT_SECRET=...
 GOOGLE_REDIRECT_URI=http://localhost:5000/auth/google/callback
 ```
 
+O login usa o fluxo de redirecionamento OAuth do Google. Não é necessário
+configurar origens JavaScript no Google Cloud.
+
 Sem essas credenciais, o site continua público, mas a página `/entrar`
 informa que o login Google está indisponível. Em produção, a aplicação
 recusa iniciar sem as credenciais.
+
+## Mapa de localização
+
+Preencha `MARCA_ENDERECO` com o endereço completo da barbearia. A home
+exibe uma seção “Onde estamos” com o mapa do Google Maps e um link para
+abrir a rota. Se preferir outro provedor, defina `MAPA_EMBED_URL` e
+`MAPA_LINK` e ajuste a CSP em `app.py` para liberar o domínio do iframe.
+
+Sem endereço ou `MAPA_EMBED_URL`, a seção mostra o placeholder “Endereço
+em breve” e não carrega o iframe do Google. Ao preencher o endereço e
+reiniciar a aplicação, o placeholder é substituído automaticamente pelo
+mapa e pelos links de rota.
 
 ## Regras de negócio
 
@@ -97,6 +113,9 @@ recusa iniciar sem as credenciais.
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Credenciais OAuth. |
 | `GOOGLE_REDIRECT_URI` | URL de callback registrada no Google. |
 | `MARCA_NOME`, `MARCA_SLOGAN`, `MARCA_WHATSAPP` | Identidade da barbearia. |
+| `MARCA_ENDERECO` | Endereço exibido no rodapé e usado no mapa da home. |
+| `MAPA_EMBED_URL` | URL opcional de embed; por padrão usa Google Maps com `MARCA_ENDERECO`. |
+| `MAPA_LINK` | Link opcional para abrir a localização/rota. |
 | `AGENDAMENTO_INTERVALO_MINUTOS` | Granularidade dos horários. |
 | `AGENDAMENTO_DIAS_FUTUROS` | Janela máxima de agendamento. |
 | `CANCELAMENTO_MINUTOS_ANTECEDENCIA` | Prazo mínimo para cancelar. |

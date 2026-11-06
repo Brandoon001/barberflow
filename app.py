@@ -193,6 +193,8 @@ def create_app(config_object=None):
             "style-src 'self'; "
             "script-src 'self'; "
             "font-src 'self'; "
+            "connect-src 'self'; "
+            "frame-src https://www.google.com https://maps.google.com; "
             "form-action 'self'; "
             "frame-ancestors 'none'; "
             "base-uri 'self'; "

@@ -1,9 +1,35 @@
-from flask import Blueprint, render_template
+from urllib.parse import quote_plus
+
+from flask import Blueprint, current_app, render_template
 
 from database.db import obter_conexao
 
 
 public_bp = Blueprint("public", __name__)
+
+
+def _mapa_da_barbearia():
+    endereco = (current_app.config["MARCA"].get("endereco") or "").strip()
+    embed_url = (current_app.config.get("MAPA_EMBED_URL") or "").strip()
+    link = (current_app.config.get("MAPA_LINK") or "").strip()
+
+    if endereco:
+        if not embed_url:
+            embed_url = (
+                "https://www.google.com/maps?q="
+                f"{quote_plus(endereco)}&output=embed"
+            )
+        if not link:
+            link = (
+                "https://www.google.com/maps/search/?api=1&query="
+                f"{quote_plus(endereco)}"
+            )
+
+    return {
+        "endereco": endereco,
+        "embed_url": embed_url,
+        "link": link,
+    }
 
 
 @public_bp.route("/")
@@ -33,6 +59,7 @@ def inicio():
         "publico/index.html",
         servicos=servicos,
         profissionais=profissionais,
+        mapa=_mapa_da_barbearia(),
     )
 
 

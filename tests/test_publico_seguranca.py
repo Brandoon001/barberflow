@@ -21,6 +21,49 @@ class PublicoSegurancaTestCase(BaseBarberFlowTestCase):
         self.assertIn("Rafael", html)
         self.assertIn("Agendar horário", html)
 
+    def test_home_exibe_mapa_quando_endereco_configurado(self):
+        self.app.config["MARCA"]["endereco"] = (
+            "Rua Augusta, 123 - São Paulo"
+        )
+
+        html = self.client.get("/").get_data(as_text=True)
+
+        self.assertIn('id="localizacao"', html)
+        self.assertIn("<iframe", html)
+        self.assertIn("google.com/maps?q=", html)
+        self.assertIn("output=embed", html)
+        self.assertIn("Abrir no mapa", html)
+        self.assertIn("Rua Augusta, 123", html)
+        self.assertNotIn("mapa-placeholder", html)
+
+    def test_home_exibe_placeholder_sem_endereco(self):
+        self.app.config["MARCA"]["endereco"] = ""
+        self.app.config["MAPA_EMBED_URL"] = ""
+        self.app.config["MAPA_LINK"] = ""
+
+        html = self.client.get("/").get_data(as_text=True)
+
+        self.assertIn('id="localizacao"', html)
+        self.assertIn("mapa-placeholder", html)
+        self.assertIn("Endereço em breve", html)
+        self.assertNotIn("<iframe", html)
+        self.assertNotIn("google.com/maps", html)
+        self.assertNotIn("Abrir no mapa", html)
+
+    def test_home_exibe_mapa_customizado(self):
+        self.app.config["MARCA"]["endereco"] = ""
+        self.app.config["MAPA_EMBED_URL"] = (
+            "https://www.openstreetmap.org/export/embed.html?bbox=1"
+        )
+        self.app.config["MAPA_LINK"] = "https://www.openstreetmap.org/"
+
+        html = self.client.get("/").get_data(as_text=True)
+
+        self.assertIn('id="localizacao"', html)
+        self.assertIn("openstreetmap.org/export/embed.html", html)
+        self.assertIn("Abrir no mapa", html)
+        self.assertNotIn("mapa-placeholder", html)
+
     def test_paginas_publicas_e_status(self):
         for url in ("/", "/privacidade", "/politica-cancelamento", "/status"):
             resposta = self.client.get(url)
@@ -49,11 +92,12 @@ class PublicoSegurancaTestCase(BaseBarberFlowTestCase):
             resposta.headers["X-Content-Type-Options"], "nosniff"
         )
         self.assertEqual(resposta.headers["X-Frame-Options"], "DENY")
-        self.assertIn(
-            "default-src 'self'",
-            resposta.headers["Content-Security-Policy"],
-        )
-        self.assertIn("frame-ancestors 'none'", resposta.headers["Content-Security-Policy"])
+        csp = resposta.headers["Content-Security-Policy"]
+        self.assertIn("default-src 'self'", csp)
+        self.assertNotIn("accounts.google.com/gsi", csp)
+        self.assertIn("https://www.google.com", csp)
+        self.assertIn("https://maps.google.com", csp)
+        self.assertIn("frame-ancestors 'none'", csp)
 
     def test_rotas_privadas_exigem_login(self):
         for url in ("/minha-conta", "/agendamento"):
